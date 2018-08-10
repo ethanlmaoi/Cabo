@@ -18,17 +18,17 @@ public class Discard : MonoBehaviour {
 	
 	}
 
-    public void addCard(Card c)
+    public void addCard(Card c) //add card to discard pile
     {
         discard.Push(c);
     }
 
-    public Card checkTop()
+    public Card checkTop() //check top card in case of doubles
     {
         return discard.Peek();
     }
 
-    public void shuffleIntoDeck()
+    public void shuffleIntoDeck() //shuffle discard cards back into deck
     {
         while(discard.Count > 0)
         {

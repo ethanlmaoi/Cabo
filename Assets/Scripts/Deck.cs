@@ -7,7 +7,7 @@ public class Deck : MonoBehaviour {
 
     const int ACE = 1;
     const int KING = 13;
-    const int NUM_QUEUES = 4;
+    const int NUM_QUEUES = 5;
 
     Stack<Card> deck;
 
@@ -15,7 +15,7 @@ public class Deck : MonoBehaviour {
 	void Start () {
         deck = new Stack<Card>();
 
-        for(int i = ACE; i <= KING; i++)
+        for(int i = ACE; i <= KING; i++) //create cards and put them in the deck
         {
             deck.Push(new Card(i, Card.Suit.DIAMONDS));
             deck.Push(new Card(i, Card.Suit.CLUBS));
@@ -24,6 +24,7 @@ public class Deck : MonoBehaviour {
         }
 
         shuffle();
+        shuffle(); //shuffle twice for randomness
 	}
 	
 	// Update is called once per frame
@@ -31,42 +32,37 @@ public class Deck : MonoBehaviour {
 	
 	}
 
-    public void addCard(Card c)
+    public void addCard(Card c) //add a card to the deck
     {
         deck.Push(c);
     }
 
-    public Card drawCard()
+    public Card drawCard() //draw a card from the deck
     {
         return deck.Pop();
     }
 
     public void shuffle()
     {
-        Queue<Card>[] queues = new Queue<Card>[NUM_QUEUES];
+        Queue<Card>[] queues = new Queue<Card>[NUM_QUEUES]; //queues hold cards while shuffling
         for(int i = 0; i < NUM_QUEUES; i++)
         {
             queues[i] = new Queue<Card>();
         }
 
-        int currQueue = 0;
-        while (deck.Count > 0)
+        System.Random rand = new System.Random();
+        while (deck.Count > 0) //randomly distribute deck into 5 queues
         {
-            queues[currQueue].Enqueue(deck.Pop());
-            currQueue++;
-            if(currQueue == queues.Length)
-            {
-                currQueue = 0;
-            }
+            int ind = rand.Next(queues.Length);
+            queues[ind].Enqueue(deck.Pop());
         }
 
-        System.Random rand = new System.Random();
-        int queuesInUse = queues.Length;
-        while (queues[0] != null)
+        int queuesInUse = queues.Length; //tracks number of nonempty queues
+        while (queues[0] != null) //while at least one queue is nonempty
         {
-            int ind = rand.Next(queuesInUse);
+            int ind = rand.Next(queuesInUse); //randomly pick a queue from which to pull
             deck.Push(queues[ind].Dequeue());
-            if (queues[ind].Count == 0)
+            if (queues[ind].Count == 0) //if the queue is now empty, null it out and move everything down
             {
                 queues[ind] = null;
                 for(int i = ind + 1; i < queues.Length; i++)
@@ -74,7 +70,7 @@ public class Deck : MonoBehaviour {
                     queues[i - 1] = queues[i];
                     queues[i] = null;
                 }
-                queuesInUse--;
+                queuesInUse--; //decrement nonempty queue tracker
             }
         }
     }

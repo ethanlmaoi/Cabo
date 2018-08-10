@@ -18,25 +18,25 @@ public class Card {
         suit = s;
     }
 
-    public int getNum()
+    public int getNum() //return number, not value, of this card
     {
         return num;
     }
 
-    public Suit getSuit()
+    public Suit getSuit() //return suit of this card
     {
         return suit;
     }
 
-    public int getValue()
+    public int getValue() //return value, not number, of this card
     {
-        if((suit == Suit.DIAMONDS || suit == Suit.HEARTS) && num == KING)
+        if((suit == Suit.DIAMONDS || suit == Suit.HEARTS) && num == KING) //red kings are worth -1
         {
             return -1;
         }
         else
         {
-            return num;
+            return num; //otherwise, normal value
         }
     }
 }
