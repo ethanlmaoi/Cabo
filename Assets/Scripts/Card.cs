@@ -28,7 +28,7 @@ public class Card {
         return suit;
     }
 
-    public int getValue() //return value, not number, of this card
+    public int getValue() //return value, not number, of this cardy
     {
         if((suit == Suit.DIAMONDS || suit == Suit.HEARTS) && num == KING) //red kings are worth -1
         {
