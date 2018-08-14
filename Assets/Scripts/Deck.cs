@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System;
 
 public class Deck : MonoBehaviour {
-
     const int ACE = 1;
     const int KING = 13;
     const int NUM_QUEUES = 5;

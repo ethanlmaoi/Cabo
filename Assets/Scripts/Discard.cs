@@ -28,6 +28,11 @@ public class Discard : MonoBehaviour {
         return discard.Peek();
     }
 
+    public Card drawCard()
+    {
+        return discard.Pop();
+    }
+
     public void shuffleIntoDeck() //shuffle discard cards back into deck
     {
         while(discard.Count > 0)

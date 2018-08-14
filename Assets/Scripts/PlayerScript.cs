@@ -5,7 +5,7 @@ using System.Collections;
 public class PlayerScript : NetworkBehaviour {
 
     const int HAND_MAX = 6;
-    enum Modes { BEGIN, DRAW, TURN, PEEK, SWAP, WAITING, DOUBLING, REPLACING };
+    enum Modes { SPAWN, BEGIN, DRAW, TURN, PEEK, SWAP, WAITING, DOUBLING, REPLACING };
     const int PEEK_SELF_7 = 7;
     const int PEEK_SELF_8 = 8;
     const int PEEK_OTHER_9 = 9;
@@ -41,85 +41,98 @@ public class PlayerScript : NetworkBehaviour {
         discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
 
         hand = new HandCard[HAND_MAX];
-        Transform[] hcTransforms = GetComponentsInChildren<Transform>();
-        foreach(Transform tf in hcTransforms)
+        HandCard[] hcScripts = GetComponentsInChildren<HandCard>();
+        foreach(HandCard hc in hcScripts)
         {
-            switch(tf.parent.name)
+            int ind = -1;
+            switch(hc.transform.name)
             {
                 case "Hand Card 1":
-                    hand[0] = tf.GetComponentInParent<HandCard>();
+                    ind = 0;
                     break;
                 case "Hand Card 2":
-                    hand[1] = tf.GetComponentInParent<HandCard>();
+                    ind = 1;
                     break;
                 case "Hand Card 3":
-                    hand[2] = tf.GetComponentInParent<HandCard>();
+                    ind = 2;
                     break;
                 case "Hand Card 4":
-                    hand[3] = tf.GetComponentInParent<HandCard>();
+                    ind = 3;
                     break;
                 case "Extra Card 1":
-                    hand[4] = tf.GetComponentInParent<HandCard>();
+                    ind = 4;
                     break;
                 case "Extra Card 2":
-                    hand[5] = tf.GetComponentInParent<HandCard>();
+                    ind = 5;
                     break;
             }
+            hand[ind] = hc;
         }
 
         for(int i = 0; i < HAND_MAX; i++)
         {
             hand[i].setOwner(this);
+
+            //test block - delete after testing
+            hand[i].setCard(new Card(1, Card.Suit.SPADES));
         }
 
         activeCard = null;
         chosenCards = 0;
-        mode = Modes.BEGIN;
+        mode = Modes.SPAWN;
+        Debug.Log("begin");
 	}
 	
 	void FixedUpdate () {
         if (this.isLocalPlayer)
         {
-            Touch touch = Input.touches[0];
+            /*Touch touch = Input.touches[0];
             if (touch.phase == TouchPhase.Began) {
-                Ray ray = Camera.main.ScreenPointToRay(touch.position);
+                Ray ray = Camera.main.ScreenPointToRay(touch.position);*/
+                if(Input.GetMouseButtonDown(0)) {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if(Physics.Raycast(ray, out hit))
                 {
                     switch (mode)
                     {
                         case Modes.BEGIN:
-                            if (hit.transform.parent.tag == "HandCard")
+                            if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getOwner() == this 
+                                && hit.transform.GetComponent<HandCard>().getCard() != null)
                             {
                                 if (chosenCards == 0)
                                 {
                                     //reveal card
                                     chosenCards++;
+                                    Debug.Log(chosenCards);
                                 }
                                 else if (chosenCards == 1)
                                 {
                                     //reveal card
                                     chosenCards = 0;
                                     mode = Modes.WAITING;
+                                    Debug.Log("waiting");
                                     //unhighlight own cards
                                 }
                             }
                             break;
                         case Modes.DRAW:
-                            if (hit.transform.parent.tag == "Deck")
+                            if (hit.transform.tag == "Deck")
                             {
                                 //play animation of drawing card
                                 activeCard = deck.drawCard();
                                 mode = Modes.TURN;
+                                Debug.Log("turn");
                             }
-                            else if (hit.transform.parent.tag == "Discard")
+                            else if (hit.transform.tag == "Discard")
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
+                                Debug.Log("doubling");
                             }
                             break;
                         case Modes.TURN:
-                            if (hit.transform.parent.tag == "Discard")
+                            if (hit.transform.tag == "Discard")
                             {
                                 //play animation moving card to discard pile
                                 discard.addCard(activeCard);
@@ -147,46 +160,47 @@ public class PlayerScript : NetworkBehaviour {
                                 }
                                 activeCard = null;
                             }
-                            else if (hit.transform.parent.tag == "HandCard")
+                            else if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
                             {
-                                if (hit.transform.GetComponentInParent<HandCard>().getOwner() == this)
+                                if (hit.transform.GetComponent<HandCard>().getOwner() == this)
                                 {
-                                    Card oldCard = hit.transform.GetComponentInParent<HandCard>().replaceCard(activeCard);
+                                    Card oldCard = hit.transform.GetComponent<HandCard>().replaceCard(activeCard);
                                     discard.addCard(oldCard);
                                     //TODO add animations for replacing card and discarding old card
                                     mode = Modes.WAITING;
+                                    Debug.Log("waiting");
                                 }
                             }
                             break;
                         case Modes.PEEK:
-                            if (hit.transform.parent.tag == "HandCard")
+                            if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
                             {
-                                if( (peekingSelf && hit.transform.GetComponentInParent<HandCard>().getOwner() == this) ||
-                                    (!peekingSelf && hit.transform.GetComponentInParent<HandCard>().getOwner() != this) )
+                                if( (peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() == this) ||
+                                    (!peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() != this) )
                                 {
-                                    Card peekCard = hit.transform.GetComponentInParent<HandCard>().getCard();
+                                    Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
                                     //TODO play animation of revealing card
                                     mode = Modes.WAITING;
                                 }
                             }
-                            else if (hit.transform.parent.tag == "Discard")
+                            else if (hit.transform.tag == "Discard")
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
                             }
                             break;
                         case Modes.SWAP:
-                            if (hit.transform.parent.tag == "HandCard")
+                            if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
                             {
-                                if(pickingSelfForSwap && hit.transform.GetComponentInParent<HandCard>().getOwner() == this)
+                                if(pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() == this)
                                 {
-                                    swapSpot1 = hit.transform.GetComponentInParent<HandCard>();
+                                    swapSpot1 = hit.transform.GetComponent<HandCard>();
                                     pickingSelfForSwap = false;
                                     //TODO picked card and other cards
                                 }
-                                else if(!pickingSelfForSwap && hit.transform.GetComponentInParent<HandCard>().getOwner() != this)
+                                else if(!pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() != this)
                                 {
-                                    swapSpot2 = hit.transform.GetComponentInParent<HandCard>();
+                                    swapSpot2 = hit.transform.GetComponent<HandCard>();
                                     if(!swapIsBlind)
                                     {
                                         Card swap1 = swapSpot1.getCard();
@@ -205,23 +219,24 @@ public class PlayerScript : NetworkBehaviour {
                                     mode = Modes.WAITING;
                                 }
                             }
-                            else if (hit.transform.parent.tag == "Discard")
+                            else if (hit.transform.tag == "Discard")
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
                             }
                             break;
                         case Modes.WAITING:
-                            if (hit.transform.parent.tag == "Discard")
+                            if (hit.transform.tag == "Discard")
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
+                                Debug.Log("doubling");
                             }
                             break;
                         case Modes.DOUBLING:
-                            if(hit.transform.parent.tag == "HandCard")
+                            if(hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
                             {
-                                doubleSpot = hit.transform.GetComponentInParent<HandCard>(); //need to remember the spot across calls
+                                doubleSpot = hit.transform.GetComponent<HandCard>(); //need to remember the spot across calls
                                 Card doubleCard = doubleSpot.getCard();
                                 if (doubleCard.getNum() == discard.checkTop().getNum())
                                 {
@@ -232,6 +247,7 @@ public class PlayerScript : NetworkBehaviour {
                                     {
                                         mode = Modes.REPLACING;
                                         //TODO highlight own cards
+                                        Debug.Log("replacing");
                                     }
                                     else
                                     {
@@ -240,19 +256,21 @@ public class PlayerScript : NetworkBehaviour {
                                 }
                                 else
                                 {
-                                    //TODO check for a handcard into which to put the card at the top of the discard pile
+                                    HandCard moveDest = addCard(discard.drawCard());
+                                    //play animation of moving card from discard to moveDest
                                     mode = oldMode;
                                 }
                             }
-                            else if(hit.transform.parent.tag == "Discard")
+                            else if(hit.transform.tag == "Discard")
                             {
                                 mode = oldMode;
+                                Debug.Log(oldMode);
                             }
                             break;
                         case Modes.REPLACING:
-                            if(hit.transform.parent.tag == "HandCard")
+                            if(hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
                             {
-                                HandCard replacingSpot = hit.transform.GetComponentInParent<HandCard>();
+                                HandCard replacingSpot = hit.transform.GetComponent<HandCard>();
                                 if (replacingSpot.getOwner() == this)
                                 {
                                     doubleSpot.setCard(replacingSpot.getCard());
@@ -268,4 +286,33 @@ public class PlayerScript : NetworkBehaviour {
             }
         }
 	}
+
+    public void begin()
+    {
+        mode = Modes.BEGIN;
+    }
+
+    public bool isWaiting()
+    {
+        return mode == Modes.WAITING;
+    }
+
+    public void startTurn()
+    {
+        mode = Modes.DRAW;
+    }
+
+    public HandCard addCard(Card card)
+    {
+        for(int i = 0; i < hand.Length; i++)
+        {
+            if(hand[i].getCard() == null)
+            {
+                hand[i].setCard(card);
+                return hand[i];
+            }
+        }
+
+        return null;
+    }
 }
