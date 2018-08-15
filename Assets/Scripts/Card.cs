@@ -1,6 +1,7 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 
-public class Card {
+public class Card : MonoBehaviour {
 
     const int ACE = 1;
     const int JACK = 11;
