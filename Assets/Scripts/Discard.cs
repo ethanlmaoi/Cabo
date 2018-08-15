@@ -6,12 +6,10 @@ using System.Collections.Generic;
 public class Discard : NetworkBehaviour {
 
     Stack<Card> discard;
-    Deck deck;
 
 	// Use this for initialization
 	void Start () {
         discard = new Stack<Card>();
-        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
 	}
 	
 	// Update is called once per frame
@@ -34,7 +32,7 @@ public class Discard : NetworkBehaviour {
         return discard.Pop();
     }
 
-    public void shuffleIntoDeck() //shuffle discard cards back into deck
+    public void shuffleIntoDeck(Deck deck) //shuffle discard cards back into deck
     {
         while(discard.Count > 0)
         {

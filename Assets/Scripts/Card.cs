@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
-public class Card : MonoBehaviour {
+public class Card : NetworkBehaviour {
 
     const int ACE = 1;
     const int JACK = 11;
@@ -13,9 +14,13 @@ public class Card : MonoBehaviour {
     int num;
     Suit suit;
 
-	public Card(int number, Suit s)
+	public void setNum(int n)
     {
-        num = number;
+        num = n;
+    }
+
+    public void setSuit(Suit s)
+    {
         suit = s;
     }
 
@@ -39,5 +44,10 @@ public class Card : MonoBehaviour {
         {
             return num; //otherwise, normal value
         }
+    }
+
+    public string toString()
+    {
+        return num + " of " + suit;
     }
 }

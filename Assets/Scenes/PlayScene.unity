@@ -610,6 +610,7 @@ GameObject:
   - 114: {fileID: 1482160519}
   - 114: {fileID: 1482160518}
   - 114: {fileID: 1482160517}
+  - 65: {fileID: 1482160521}
   m_Layer: 0
   m_Name: Deck
   m_TagString: Deck
@@ -680,6 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf433db2247b60c49b08921cac96a5e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardPrefab: {fileID: 1000012980519194, guid: c80ffdf6589729544848e7d16fde6f72, type: 2}
 --- !u!4 &1482160520
 Transform:
   m_ObjectHideFlags: 0
@@ -693,6 +695,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
+--- !u!65 &1482160521
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1482160516}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.25, y: 1.875, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1731974694
 GameObject:
   m_ObjectHideFlags: 0
@@ -940,6 +954,7 @@ GameObject:
   - 114: {fileID: 2118605182}
   - 114: {fileID: 2118605181}
   - 114: {fileID: 2118605180}
+  - 65: {fileID: 2118605184}
   m_Layer: 0
   m_Name: Discard
   m_TagString: Discard
@@ -1023,3 +1038,15 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
+--- !u!65 &2118605184
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2118605179}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.25, y: 1.875, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
