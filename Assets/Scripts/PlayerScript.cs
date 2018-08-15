@@ -111,6 +111,7 @@ public class PlayerScript : NetworkBehaviour {
                                     //reveal card
                                     chosenCards = 0;
                                     mode = Modes.WAITING;
+                                    control.nextPlayerTurn();
                                     Debug.Log("waiting");
                                     //unhighlight own cards
                                 }
@@ -168,6 +169,7 @@ public class PlayerScript : NetworkBehaviour {
                                     discard.addCard(oldCard);
                                     //TODO add animations for replacing card and discarding old card
                                     mode = Modes.WAITING;
+                                    control.nextPlayerTurn();
                                     Debug.Log("waiting");
                                 }
                             }
@@ -181,6 +183,7 @@ public class PlayerScript : NetworkBehaviour {
                                     Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
                                     //TODO play animation of revealing card
                                     mode = Modes.WAITING;
+                                    control.nextPlayerTurn();
                                 }
                             }
                             else if (hit.transform.tag == "Discard")
@@ -217,6 +220,7 @@ public class PlayerScript : NetworkBehaviour {
                                     }
                                     pickingSelfForSwap = true;
                                     mode = Modes.WAITING;
+                                    control.nextPlayerTurn();
                                 }
                             }
                             else if (hit.transform.tag == "Discard")

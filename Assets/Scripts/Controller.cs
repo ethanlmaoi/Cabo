@@ -10,6 +10,7 @@ public class Controller : NetworkManager {
     int numSpawned = 0;
     PlayerScript[] players;
     int currPlayerInd = 0;
+    bool nextPlayer = false;
 
     Deck deck;
     Discard discard;
@@ -23,7 +24,12 @@ public class Controller : NetworkManager {
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
-
+        if(nextPlayer)
+        {
+            players[currPlayerInd].startTurn();
+            currPlayerInd = (currPlayerInd + 1) % MAX_PLAYERS;
+            nextPlayer = false;
+        }
 	}
 
     public void startGame()
@@ -36,6 +42,11 @@ public class Controller : NetworkManager {
             }
             player.begin();
         }
+    }
+
+    public void nextPlayerTurn()
+    {
+        nextPlayer = true;
     }
 
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
