@@ -37,8 +37,6 @@ public class PlayerScript : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
         control = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
-        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
-        discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
 
         hand = new HandCard[HAND_MAX];
         HandCard[] hcScripts = GetComponentsInChildren<HandCard>();
@@ -80,16 +78,17 @@ public class PlayerScript : NetworkBehaviour {
         activeCard = null;
         chosenCards = 0;
         mode = Modes.SPAWN;
+
+        if(this.isLocalPlayer)
+        {
+            GetComponentInChildren<Camera>().enabled = true;
+            GetComponentInChildren<AudioListener>().enabled = true;
+        }
 	}
 	
 	void FixedUpdate () {
         if (this.isLocalPlayer)
         {
-            if (GetComponentInChildren<Camera>().enabled == false || GetComponentInChildren<AudioListener>().enabled == false)
-            {
-                GetComponentInChildren<Camera>().enabled = true;
-                GetComponentInChildren<AudioListener>().enabled = true;
-            }
             /*Touch touch = Input.touches[0];
             if (touch.phase == TouchPhase.Began) {
                 Ray ray = Camera.main.ScreenPointToRay(touch.position);*/
@@ -298,6 +297,8 @@ public class PlayerScript : NetworkBehaviour {
     public void begin()
     {
         mode = Modes.BEGIN;
+        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
+        discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
         Debug.Log("begin");
     }
 

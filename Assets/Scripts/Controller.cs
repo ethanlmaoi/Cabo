@@ -12,14 +12,16 @@ public class Controller : NetworkManager {
     int currPlayerInd = 0;
     bool nextPlayer = false;
 
+    public GameObject deckObj;
     Deck deck;
+    public GameObject discardObj;
     Discard discard;
 
 	// Use this for initialization
 	void Start () {
         players = new PlayerScript[MAX_PLAYERS];
-        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
-        discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
+        deck = deckObj.GetComponent<Deck>();
+        discard = discardObj.GetComponent<Discard>();
 	}
 	
 	// FixedUpdate is called independent of frame
@@ -39,6 +41,7 @@ public class Controller : NetworkManager {
             for(int i = 0; i < STARTING_HAND_SIZE; i++)
             {
                 HandCard moveDest = player.addCard(deck.drawCard());
+                //TODO animate moving card from deck to moveDest
             }
             player.begin();
         }
@@ -71,7 +74,7 @@ public class Controller : NetworkManager {
     public override void OnStartHost()
     {
         numSpawned = 0;
-        base.OnStartServer();
+        base.OnStartHost();
     }
     public override void OnServerDisconnect(NetworkConnection conn)
     {

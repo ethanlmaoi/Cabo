@@ -3,7 +3,7 @@ using System.Collections;
 
 public class HandCard : MonoBehaviour {
 
-    Card card; //the card at this spot in the hand
+    public Card card; //the card at this spot in the hand
     PlayerScript owner; //the player to whom this hand card belongs
 
     public void setOwner(PlayerScript player)

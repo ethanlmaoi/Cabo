@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class Deck : MonoBehaviour {
+public class Deck : NetworkBehaviour {
     const int ACE = 1;
     const int KING = 13;
     const int NUM_QUEUES = 5;
