@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Controller : NetworkManager {
 
-    const int MAX_PLAYERS = 4;
+    const int MAX_PLAYERS = 2;
     const int STARTING_HAND_SIZE = 4;
 
     int numSpawned = 0;
@@ -18,7 +18,7 @@ public class Controller : NetworkManager {
 	// Use this for initialization
 	void Start () {
         players = new PlayerScript[MAX_PLAYERS];
-        deck = GameObject.FindGameObjectWithTag("DecK").GetComponent<Deck>();
+        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
         discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
 	}
 	
@@ -52,6 +52,7 @@ public class Controller : NetworkManager {
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
         numSpawned++;
+        Debug.Log(numSpawned);
         Transform[] pos = startPositions.ToArray();
         Vector3 spawnPos = Vector3.zero;
         Quaternion spawnRot = Quaternion.identity;
@@ -67,9 +68,14 @@ public class Controller : NetworkManager {
         players[numSpawned - 1] = player.GetComponent<PlayerScript>();
     }
 
-    public override void OnStopServer()
+    public override void OnStartHost()
     {
         numSpawned = 0;
-        base.OnStopServer();
+        base.OnStartServer();
+    }
+    public override void OnServerDisconnect(NetworkConnection conn)
+    {
+        numSpawned--;
+        base.OnServerDisconnect(conn);
     }
 }

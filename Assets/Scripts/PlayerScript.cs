@@ -80,16 +80,20 @@ public class PlayerScript : NetworkBehaviour {
         activeCard = null;
         chosenCards = 0;
         mode = Modes.SPAWN;
-        Debug.Log("begin");
 	}
 	
 	void FixedUpdate () {
         if (this.isLocalPlayer)
         {
+            if (GetComponentInChildren<Camera>().enabled == false || GetComponentInChildren<AudioListener>().enabled == false)
+            {
+                GetComponentInChildren<Camera>().enabled = true;
+                GetComponentInChildren<AudioListener>().enabled = true;
+            }
             /*Touch touch = Input.touches[0];
             if (touch.phase == TouchPhase.Began) {
                 Ray ray = Camera.main.ScreenPointToRay(touch.position);*/
-                if(Input.GetMouseButtonDown(0)) {
+            if (Input.GetMouseButtonDown(0)) {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if(Physics.Raycast(ray, out hit))
@@ -294,6 +298,7 @@ public class PlayerScript : NetworkBehaviour {
     public void begin()
     {
         mode = Modes.BEGIN;
+        Debug.Log("begin");
     }
 
     public bool isWaiting()
@@ -304,6 +309,7 @@ public class PlayerScript : NetworkBehaviour {
     public void startTurn()
     {
         mode = Modes.DRAW;
+        Debug.Log("draw");
     }
 
     public HandCard addCard(Card card)
