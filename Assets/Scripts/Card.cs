@@ -13,8 +13,15 @@ public class Card : NetworkBehaviour {
 
     int num;
     Suit suit;
+    bool isFlipped;
 
-	public void setNum(int n)
+    public Card(int number, Suit s) // why remove?
+    {
+        num = number;
+        suit = s;
+    }
+
+    public void setNum(int n)
     {
         num = n;
     }
@@ -44,6 +51,16 @@ public class Card : NetworkBehaviour {
         {
             return num; //otherwise, normal value
         }
+    }
+
+    public bool checkFlipped() // true if flipped up, false if flipped down
+    {
+        return isFlipped;
+    }
+
+    public void toggleCard() // flips up if down, flips down if up
+    {
+        isFlipped = !isFlipped;
     }
 
     public string toString()
