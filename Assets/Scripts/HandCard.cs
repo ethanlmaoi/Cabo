@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 
 public class HandCard : NetworkBehaviour {
-
+    
     public Card card; //the card at this spot in the hand
     PlayerScript owner; //the player to whom this hand card belongs
 
