@@ -30,9 +30,28 @@ public class PlayerScript : NetworkBehaviour {
     bool peekingSelf; //7 and 8 peek self, 9 and 10 peek others
     bool pickingSelfForSwap; //swapping has two phases, picking your own card, then picking somebody else's card
     bool swapIsBlind; //J and Q are blind swap, K is seeing swap
-
+    
     int chosenCards;
+
+    [SyncVar]
     Modes mode;
+
+     public GameObject gameStarter;
+
+    [SyncVar]
+    public string perName; //debug purposes
+
+    Camera cam;
+
+    public void setName(string n)
+    {
+        perName = n;
+    }
+
+    public string getName()
+    {
+        return perName;
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -78,8 +97,14 @@ public class PlayerScript : NetworkBehaviour {
 
         if(this.isLocalPlayer)
         {
-            GetComponentInChildren<Camera>().enabled = true;
+            cam = GetComponentInChildren<Camera>();
+            cam.enabled = true;
             GetComponentInChildren<AudioListener>().enabled = true;
+        }
+
+        if(this.isServer)
+        {
+            Instantiate(gameStarter);
         }
 	}
 	
@@ -88,15 +113,25 @@ public class PlayerScript : NetworkBehaviour {
         {
             /*Touch touch = Input.touches[0];
             if (touch.phase == TouchPhase.Began) {
-                Ray ray = Camera.main.ScreenPointToRay(touch.position);*/
+                Ray ray = cam.ScreenPointToRay(touch.position);*/
             if (Input.GetMouseButtonDown(0)) {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if(Physics.Raycast(ray, out hit))
                 {
+                    if(hit.transform.tag == "GameStarter")
+                    {
+                        hit.transform.GetComponent<GameStarter>().startGame();
+                        Destroy(hit.transform.gameObject);
+                    }
+                    Debug.Log(this.getName() + " hit " + hit.transform + " while in " + mode);
                     switch (mode)
                     {
                         case Modes.BEGIN:
+                            if(hit.transform.tag == "HandCard")
+                            {
+                                Debug.Log("hit card belonging to " + hit.transform.GetComponent<HandCard>().getOwner().getName());
+                            }
                             if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getOwner() == this 
                                 && hit.transform.GetComponent<HandCard>().getCard() != null)
                             {
@@ -300,7 +335,8 @@ public class PlayerScript : NetworkBehaviour {
         }
 	}
 
-    public void begin()
+    [ClientRpc]
+    public void RpcBegin()
     {
         mode = Modes.BEGIN;
         deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();

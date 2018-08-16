@@ -10,7 +10,7 @@ public class Deck : NetworkBehaviour {
     const int QUEEN = 12;
     const int KING = 13;
     const int NUM_QUEUES = 5;
-
+    
     Stack<Card> deck;
     public GameObject cardPrefab;
 
