@@ -6,31 +6,57 @@ using System;
 
 public class Deck : NetworkBehaviour {
     const int ACE = 1;
+    const int JACK = 11;
+    const int QUEEN = 12;
     const int KING = 13;
     const int NUM_QUEUES = 5;
 
     Stack<Card> deck;
+    public GameObject cardPrefab;
 
 	// Use this for initialization
 	void Start () {
         deck = new Stack<Card>();
-
-        for(int i = ACE; i <= KING; i++) //create cards and put them in the deck
-        {
-            deck.Push(new Card(i, Card.Suit.DIAMONDS));
-            deck.Push(new Card(i, Card.Suit.CLUBS));
-            deck.Push(new Card(i, Card.Suit.HEARTS));
-            deck.Push(new Card(i, Card.Suit.SPADES));
-        }
-
-        shuffle();
-        shuffle(); //shuffle twice for randomness
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+    [Command]
+    public void CmdStartGame()
+    {
+        for (int i = ACE; i <= KING; i++) //create cards and put them in the deck
+        {
+            GameObject card = (GameObject)Instantiate(cardPrefab, this.transform);
+            card.GetComponent<Card>().setNum(i);
+            card.GetComponent<Card>().setSuit(Card.Suit.DIAMONDS);
+            NetworkServer.Spawn(card);
+            deck.Push(card.GetComponent<Card>());
+
+            card = (GameObject)Instantiate(cardPrefab, this.transform);
+            card.GetComponent<Card>().setNum(i);
+            card.GetComponent<Card>().setSuit(Card.Suit.CLUBS);
+            NetworkServer.Spawn(card);
+            deck.Push(card.GetComponent<Card>());
+
+            card = (GameObject)Instantiate(cardPrefab, this.transform);
+            card.GetComponent<Card>().setNum(i);
+            card.GetComponent<Card>().setSuit(Card.Suit.HEARTS);
+            NetworkServer.Spawn(card);
+            deck.Push(card.GetComponent<Card>());
+
+            card = (GameObject)Instantiate(cardPrefab, this.transform);
+            card.GetComponent<Card>().setNum(i);
+            card.GetComponent<Card>().setSuit(Card.Suit.SPADES);
+            NetworkServer.Spawn(card);
+            deck.Push(card.GetComponent<Card>());
+        }
+
+        shuffle();
+        shuffle(); //shuffle twice for randomness
+    }
 
     public void addCard(Card c) //add a card to the deck
     {
@@ -40,6 +66,11 @@ public class Deck : NetworkBehaviour {
     public Card drawCard() //draw a card from the deck
     {
         return deck.Pop();
+    }
+
+    public int size()
+    {
+        return deck.Count;
     }
 
     public void shuffle()
@@ -61,7 +92,7 @@ public class Deck : NetworkBehaviour {
         while (queues[0] != null) //while at least one queue is nonempty
         {
             int ind = rand.Next(queuesInUse); //randomly pick a queue from which to pull
-            deck.Push(queues[ind].Dequeue());
+            if (queues[ind].Count > 0) deck.Push(queues[ind].Dequeue());
             if (queues[ind].Count == 0) //if the queue is now empty, null it out and move everything down
             {
                 queues[ind] = null;

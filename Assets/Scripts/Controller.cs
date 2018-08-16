@@ -17,30 +17,58 @@ public class Controller : NetworkManager {
     public GameObject discardObj;
     Discard discard;
 
+    bool beginning;
+
 	// Use this for initialization
 	void Start () {
         players = new PlayerScript[MAX_PLAYERS];
         deck = deckObj.GetComponent<Deck>();
         discard = discardObj.GetComponent<Discard>();
-	}
+        beginning = true;
+    }
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
+        if(beginning)
+        {
+            //TODO not working with multiple players
+            for(int i = 0; i < numSpawned; i++)
+            {
+                if(!players[i].isWaiting())
+                {
+                    break;
+                }
+                if(i == numSpawned - 1)
+                {
+                    beginning = false;
+                    nextPlayer = true;
+                    Debug.Log("beginning game");
+                }
+            }
+        }
         if(nextPlayer)
         {
+            if(deck.size() == 0)
+            {
+                discard.shuffleIntoDeck(deck);
+            }
             players[currPlayerInd].startTurn();
-            currPlayerInd = (currPlayerInd + 1) % MAX_PLAYERS;
+            currPlayerInd = (currPlayerInd + 1) % numSpawned;
             nextPlayer = false;
         }
 	}
 
     public void startGame()
     {
+        deck.CmdStartGame();
+
         foreach (PlayerScript player in players)
         {
-            for(int i = 0; i < STARTING_HAND_SIZE; i++)
+            if (player == null) continue;
+            for (int i = 0; i < STARTING_HAND_SIZE; i++)
             {
                 HandCard moveDest = player.addCard(deck.drawCard());
+                Debug.Log("moving to " + moveDest);
                 //TODO animate moving card from deck to moveDest
             }
             player.begin();
@@ -55,7 +83,6 @@ public class Controller : NetworkManager {
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
         numSpawned++;
-        Debug.Log(numSpawned);
         Transform[] pos = startPositions.ToArray();
         Vector3 spawnPos = Vector3.zero;
         Quaternion spawnRot = Quaternion.identity;

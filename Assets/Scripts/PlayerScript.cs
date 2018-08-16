@@ -70,9 +70,6 @@ public class PlayerScript : NetworkBehaviour {
         for(int i = 0; i < HAND_MAX; i++)
         {
             hand[i].setOwner(this);
-
-            //test block - delete after testing
-            hand[i].setCard(new Card(1, Card.Suit.SPADES));
         }
 
         activeCard = null;
@@ -114,7 +111,6 @@ public class PlayerScript : NetworkBehaviour {
                                     //reveal card
                                     chosenCards = 0;
                                     mode = Modes.WAITING;
-                                    control.nextPlayerTurn();
                                     Debug.Log("waiting");
                                     //unhighlight own cards
                                 }
@@ -125,10 +121,11 @@ public class PlayerScript : NetworkBehaviour {
                             {
                                 //play animation of drawing card
                                 activeCard = deck.drawCard();
+                                Debug.Log("drew " + activeCard.toString());
                                 mode = Modes.TURN;
                                 Debug.Log("turn");
                             }
-                            else if (hit.transform.tag == "Discard")
+                            else if (hit.transform.tag == "Discard" && discard.checkTop() != null)
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
@@ -168,6 +165,7 @@ public class PlayerScript : NetworkBehaviour {
                             {
                                 if (hit.transform.GetComponent<HandCard>().getOwner() == this)
                                 {
+                                    Debug.Log("replacing " + hit.transform);
                                     Card oldCard = hit.transform.GetComponent<HandCard>().replaceCard(activeCard);
                                     discard.addCard(oldCard);
                                     //TODO add animations for replacing card and discarding old card
@@ -184,6 +182,7 @@ public class PlayerScript : NetworkBehaviour {
                                     (!peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() != this) )
                                 {
                                     Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
+                                    Debug.Log("peeked at " + peekCard.toString());
                                     //TODO play animation of revealing card
                                     mode = Modes.WAITING;
                                     control.nextPlayerTurn();
@@ -193,6 +192,7 @@ public class PlayerScript : NetworkBehaviour {
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
+                                Debug.Log("doubling");
                             }
                             break;
                         case Modes.SWAP:
@@ -200,6 +200,7 @@ public class PlayerScript : NetworkBehaviour {
                             {
                                 if(pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() == this)
                                 {
+                                    Debug.Log("picked " + hit.transform + " first");
                                     swapSpot1 = hit.transform.GetComponent<HandCard>();
                                     pickingSelfForSwap = false;
                                     //TODO picked card and other cards
@@ -207,10 +208,12 @@ public class PlayerScript : NetworkBehaviour {
                                 else if(!pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() != this)
                                 {
                                     swapSpot2 = hit.transform.GetComponent<HandCard>();
-                                    if(!swapIsBlind)
+                                    Debug.Log("picked " + hit.transform + " second");
+                                    if (!swapIsBlind)
                                     {
                                         Card swap1 = swapSpot1.getCard();
                                         Card swap2 = swapSpot2.getCard();
+                                        Debug.Log("maybe swap " + swap1.toString() + " and " + swap2.toString());
                                         //TODO reveal the cards and prompt user if they want to swap
                                         //if they do, then do same as in else block
                                         //if not, then play animation for putting cards down and do nothing
@@ -223,6 +226,7 @@ public class PlayerScript : NetworkBehaviour {
                                     }
                                     pickingSelfForSwap = true;
                                     mode = Modes.WAITING;
+                                    Debug.Log("waiting");
                                     control.nextPlayerTurn();
                                 }
                             }
@@ -230,10 +234,11 @@ public class PlayerScript : NetworkBehaviour {
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
+                                Debug.Log("doubling");
                             }
                             break;
                         case Modes.WAITING:
-                            if (hit.transform.tag == "Discard")
+                            if (hit.transform.tag == "Discard" && discard.checkTop() != null)
                             {
                                 oldMode = mode;
                                 mode = Modes.DOUBLING;
@@ -264,6 +269,7 @@ public class PlayerScript : NetworkBehaviour {
                                 else
                                 {
                                     HandCard moveDest = addCard(discard.drawCard());
+                                    Debug.Log("moving to " + moveDest);
                                     //play animation of moving card from discard to moveDest
                                     mode = oldMode;
                                 }
