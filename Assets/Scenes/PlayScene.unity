@@ -90,6 +90,48 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &104724479
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000011111991324, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &146667272
 GameObject:
   m_ObjectHideFlags: 0
@@ -422,7 +464,6 @@ MonoBehaviour:
   m_OnlineScene: 
   m_SpawnPrefabs:
   - {fileID: 1000012980519194, guid: c80ffdf6589729544848e7d16fde6f72, type: 2}
-  - {fileID: 1000012907593068, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:

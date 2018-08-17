@@ -39,8 +39,7 @@ GameObject:
   - 33: {fileID: 33000013562228254}
   - 65: {fileID: 65000013584999078}
   - 23: {fileID: 23000014173119064}
-  - 114: {fileID: 114000010620074892}
-  - 114: {fileID: 114000011597349384}
+  - 114: {fileID: 114000011121211724}
   m_Layer: 0
   m_Name: Game Starter
   m_TagString: GameStarter
@@ -69,7 +68,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012361249856}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.45, y: 0.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.33333334, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -159,11 +158,11 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012361249856}
-  m_Text: Start Game
+  m_Text: Shuffling
   m_OffsetZ: 0
   m_CharacterSize: 0.4
   m_LineSpacing: 1
-  m_Anchor: 0
+  m_Anchor: 4
   m_Alignment: 0
   m_TabSize: 4
   m_FontSize: 0
@@ -173,7 +172,7 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
---- !u!114 &114000010620074892
+--- !u!114 &114000011121211724
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -205,14 +204,3 @@ MonoBehaviour:
     i15: 63
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
---- !u!114 &114000011597349384
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012907593068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a25e518343d02774fa1936392920cad4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

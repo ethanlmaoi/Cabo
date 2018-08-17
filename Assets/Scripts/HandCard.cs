@@ -17,20 +17,21 @@ public class HandCard : NetworkBehaviour {
         return owner;
     }
 
-    public Card replaceCard(Card newCard)
-    {
-        Card oldCard = card;
-        card = newCard;
-        return oldCard;
-    }
-
     public Card getCard()
     {
         return card;
     }
 
-    public void setCard(Card c)
+    [Command]
+    public void CmdSetCard(GameObject c)
     {
-        card = c;
+        RpcSetCard(c);
+    }
+    
+    [ClientRpc]
+    public void RpcSetCard(GameObject c)
+    {
+        Debug.Log(owner.getName() + ": " + this + " set card to " + c.GetComponent<Card>().toString());
+        card = c.GetComponent<Card>();
     }
 }
