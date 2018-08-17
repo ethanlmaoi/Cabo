@@ -14,13 +14,7 @@ public class Card : NetworkBehaviour {
     int num;
     Suit suit;
     bool isFlipped;
-
-    public Card(int number, Suit s) // why remove?
-    {
-        num = number;
-        suit = s;
-    }
-
+    
     public void setNum(int n)
     {
         num = n;
