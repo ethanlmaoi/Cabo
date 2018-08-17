@@ -17,27 +17,38 @@ public class Discard : NetworkBehaviour {
 	
 	}
 
-    public void addCard(Card c) //add card to discard pile
+    [Command]
+    public void CmdAddCard(GameObject card) //allows clients to tell other clients to discard a card
     {
-        discard.Push(c);
+        RpcAddCard(card);
     }
 
-    public Card checkTop() //check top card in case of doubles
+    [ClientRpc]
+    public void RpcAddCard(GameObject card) //add card to discard pile
+    {
+        discard.Push(card.GetComponent<Card>());
+    }
+
+    public Card peekTop() //check top card in case of doubles
     {
         return discard.Peek();
     }
 
-    public Card drawCard()
+    [ClientRpc]
+    public void RpcPopCard()
     {
-        return discard.Pop();
+        discard.Pop();
     }
 
-    public void shuffleIntoDeck(Deck deck) //shuffle discard cards back into deck
+    [Command]
+    public void CmdShuffleIntoDeck(GameObject d) //shuffle discard cards back into deck
     {
+        Deck deck = d.GetComponent<Deck>();
         while(discard.Count > 0)
         {
-            deck.addCard(discard.Pop());
+            deck.RpcAddCard(peekTop().gameObject);
+            RpcPopCard();
         }
-        deck.shuffle();
+        deck.shuffle(); //TODO shuffle only concerned with beginning of game, this not working yet
     }
 }

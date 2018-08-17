@@ -32,11 +32,11 @@ public class PlayerScript : NetworkBehaviour {
     bool swapIsBlind; //J and Q are blind swap, K is seeing swap
     
     int chosenCards;
-
+    
     [SyncVar]
     Modes mode;
 
-     public GameObject gameStarter;
+    public GameObject gameStarter;
 
     [SyncVar]
     public string perName; //debug purposes
@@ -56,6 +56,8 @@ public class PlayerScript : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
         control = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
+        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
+        discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
 
         hand = new HandCard[HAND_MAX];
         HandCard[] hcScripts = GetComponentsInChildren<HandCard>();
@@ -102,9 +104,9 @@ public class PlayerScript : NetworkBehaviour {
             GetComponentInChildren<AudioListener>().enabled = true;
         }
 
-        if(this.isServer)
+        if(!this.isServer)
         {
-            Instantiate(gameStarter);
+            gameStarter.SetActive(false);
         }
 	}
 	
@@ -119,215 +121,36 @@ public class PlayerScript : NetworkBehaviour {
                 RaycastHit hit;
                 if(Physics.Raycast(ray, out hit))
                 {
-                    if(hit.transform.tag == "GameStarter")
+                    if(this.isServer && hit.transform.tag == "GameStarter" && deck.isDoneShuffling())
                     {
-                        hit.transform.GetComponent<GameStarter>().startGame();
-                        Destroy(hit.transform.gameObject);
+                        deck.CmdDeckCards();
                     }
                     Debug.Log(this.getName() + " hit " + hit.transform + " while in " + mode);
                     switch (mode)
                     {
                         case Modes.BEGIN:
-                            if(hit.transform.tag == "HandCard")
-                            {
-                                Debug.Log("hit card belonging to " + hit.transform.GetComponent<HandCard>().getOwner().getName());
-                            }
-                            if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getOwner() == this 
-                                && hit.transform.GetComponent<HandCard>().getCard() != null)
-                            {
-                                if (chosenCards == 0)
-                                {
-                                    //reveal card
-                                    chosenCards++;
-                                    Debug.Log(chosenCards);
-                                }
-                                else if (chosenCards == 1)
-                                {
-                                    //reveal card
-                                    chosenCards = 0;
-                                    mode = Modes.WAITING;
-                                    Debug.Log("waiting");
-                                    //unhighlight own cards
-                                }
-                            }
+                            exeBegin(hit);
                             break;
                         case Modes.DRAW:
-                            if (hit.transform.tag == "Deck")
-                            {
-                                //play animation of drawing card
-                                activeCard = deck.drawCard();
-                                Debug.Log("drew " + activeCard.toString());
-                                mode = Modes.TURN;
-                                Debug.Log("turn");
-                            }
-                            else if (hit.transform.tag == "Discard" && discard.checkTop() != null)
-                            {
-                                oldMode = mode;
-                                mode = Modes.DOUBLING;
-                                Debug.Log("doubling");
-                            }
+                            exeDraw(hit);
                             break;
                         case Modes.TURN:
-                            if (hit.transform.tag == "Discard")
-                            {
-                                //play animation moving card to discard pile
-                                discard.addCard(activeCard);
-                                if(activeCard.getNum() == PEEK_SELF_7 || activeCard.getNum() == PEEK_SELF_8)
-                                {
-                                    mode = Modes.PEEK;
-                                    peekingSelf = true;
-                                }
-                                else if (activeCard.getNum() == PEEK_OTHER_9 || activeCard.getNum() == PEEK_OTHER_10)
-                                {
-                                    mode = Modes.PEEK;
-                                    peekingSelf = false;
-                                }
-                                else if(activeCard.getNum() == BLIND_SWAP_J || activeCard.getNum() == BLIND_SWAP_Q)
-                                {
-                                    mode = Modes.SWAP;
-                                    pickingSelfForSwap = true;
-                                    swapIsBlind = true;
-                                }
-                                else if(activeCard.getNum() == SEE_SWAP_K)
-                                {
-                                    mode = Modes.SWAP;
-                                    pickingSelfForSwap = true;
-                                    swapIsBlind = false;
-                                }
-                                activeCard = null;
-                            }
-                            else if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
-                            {
-                                if (hit.transform.GetComponent<HandCard>().getOwner() == this)
-                                {
-                                    Debug.Log("replacing " + hit.transform);
-                                    Card oldCard = hit.transform.GetComponent<HandCard>().replaceCard(activeCard);
-                                    discard.addCard(oldCard);
-                                    //TODO add animations for replacing card and discarding old card
-                                    mode = Modes.WAITING;
-                                    control.nextPlayerTurn();
-                                    Debug.Log("waiting");
-                                }
-                            }
+                            exeTurn(hit);
                             break;
                         case Modes.PEEK:
-                            if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
-                            {
-                                if( (peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() == this) ||
-                                    (!peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() != this) )
-                                {
-                                    Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
-                                    Debug.Log("peeked at " + peekCard.toString());
-                                    //TODO play animation of revealing card
-                                    mode = Modes.WAITING;
-                                    control.nextPlayerTurn();
-                                }
-                            }
-                            else if (hit.transform.tag == "Discard")
-                            {
-                                oldMode = mode;
-                                mode = Modes.DOUBLING;
-                                Debug.Log("doubling");
-                            }
+                            exePeek(hit);
                             break;
                         case Modes.SWAP:
-                            if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
-                            {
-                                if(pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() == this)
-                                {
-                                    Debug.Log("picked " + hit.transform + " first");
-                                    swapSpot1 = hit.transform.GetComponent<HandCard>();
-                                    pickingSelfForSwap = false;
-                                    //TODO picked card and other cards
-                                }
-                                else if(!pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() != this)
-                                {
-                                    swapSpot2 = hit.transform.GetComponent<HandCard>();
-                                    Debug.Log("picked " + hit.transform + " second");
-                                    if (!swapIsBlind)
-                                    {
-                                        Card swap1 = swapSpot1.getCard();
-                                        Card swap2 = swapSpot2.getCard();
-                                        Debug.Log("maybe swap " + swap1.toString() + " and " + swap2.toString());
-                                        //TODO reveal the cards and prompt user if they want to swap
-                                        //if they do, then do same as in else block
-                                        //if not, then play animation for putting cards down and do nothing
-                                    }
-                                    else
-                                    {
-                                        Card swapCard = swapSpot2.replaceCard(swapSpot1.getCard());
-                                        swapSpot1.setCard(swapCard);
-                                        //TODO play animation
-                                    }
-                                    pickingSelfForSwap = true;
-                                    mode = Modes.WAITING;
-                                    Debug.Log("waiting");
-                                    control.nextPlayerTurn();
-                                }
-                            }
-                            else if (hit.transform.tag == "Discard")
-                            {
-                                oldMode = mode;
-                                mode = Modes.DOUBLING;
-                                Debug.Log("doubling");
-                            }
+                            exeSwap(hit);
                             break;
                         case Modes.WAITING:
-                            if (hit.transform.tag == "Discard" && discard.checkTop() != null)
-                            {
-                                oldMode = mode;
-                                mode = Modes.DOUBLING;
-                                Debug.Log("doubling");
-                            }
+                            exeWaiting(hit);
                             break;
                         case Modes.DOUBLING:
-                            if(hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
-                            {
-                                doubleSpot = hit.transform.GetComponent<HandCard>(); //need to remember the spot across calls
-                                Card doubleCard = doubleSpot.getCard();
-                                if (doubleCard.getNum() == discard.checkTop().getNum())
-                                {
-                                    discard.addCard(doubleCard);
-                                    doubleSpot.setCard(null); //remove card from handcard
-                                    //TODO play animation for moving card from handcard to discard
-                                    if(doubleSpot.getOwner() != this)
-                                    {
-                                        mode = Modes.REPLACING;
-                                        //TODO highlight own cards
-                                        Debug.Log("replacing");
-                                    }
-                                    else
-                                    {
-                                        mode = oldMode;
-                                    }
-                                }
-                                else
-                                {
-                                    HandCard moveDest = addCard(discard.drawCard());
-                                    Debug.Log("moving to " + moveDest);
-                                    //play animation of moving card from discard to moveDest
-                                    mode = oldMode;
-                                }
-                            }
-                            else if(hit.transform.tag == "Discard")
-                            {
-                                mode = oldMode;
-                                Debug.Log(oldMode);
-                            }
+                            exeDoubling(hit);
                             break;
                         case Modes.REPLACING:
-                            if(hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
-                            {
-                                HandCard replacingSpot = hit.transform.GetComponent<HandCard>();
-                                if (replacingSpot.getOwner() == this)
-                                {
-                                    doubleSpot.setCard(replacingSpot.getCard());
-                                    replacingSpot.setCard(null);
-                                    //TODO play animation for moving card from handcard to handcard
-                                    mode = oldMode;
-                                    //TODO unhighlight own cards
-                                }
-                            }
+                            exeReplacing(hit);
                             break;
                     }
                 }
@@ -335,12 +158,246 @@ public class PlayerScript : NetworkBehaviour {
         }
 	}
 
+    void exeBegin(RaycastHit hit)
+    {
+        if (hit.transform.tag == "HandCard")
+        {
+            Debug.Log("hit card belonging to " + hit.transform.GetComponent<HandCard>().getOwner().getName());
+        }
+        if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getOwner() == this
+            && hit.transform.GetComponent<HandCard>().getCard() != null)
+        {
+            if (chosenCards == 0)
+            {
+                //reveal card
+                chosenCards++;
+                Debug.Log(chosenCards);
+            }
+            else if (chosenCards == 1)
+            {
+                //reveal card
+                chosenCards = 0;
+                CmdUpdateMode(Modes.WAITING);
+                Debug.Log("waiting");
+                //unhighlight own cards
+            }
+        }
+    }
+
+    void exeDraw(RaycastHit hit)
+    {
+        if (hit.transform.tag == "Deck")
+        {
+            //play animation of drawing card
+            activeCard = deck.peekTop();
+            deck.CmdPopCard();
+            Debug.Log("drew " + activeCard.toString());
+            CmdUpdateMode(Modes.TURN);
+            Debug.Log("turn");
+        }
+        else if (hit.transform.tag == "Discard" && discard.peekTop() != null)
+        {
+            oldMode = mode;
+            CmdUpdateMode(Modes.DOUBLING);
+            Debug.Log("doubling");
+        }
+    }
+
+    void exeTurn(RaycastHit hit)
+    {
+        if (hit.transform.tag == "Discard")
+        {
+            Debug.Log("discarded " + activeCard.toString());
+            //play animation moving card to discard pile
+            discard.CmdAddCard(activeCard.gameObject);
+            if (activeCard.getNum() == PEEK_SELF_7 || activeCard.getNum() == PEEK_SELF_8)
+            {
+                CmdUpdateMode(Modes.PEEK);
+                peekingSelf = true;
+            }
+            else if (activeCard.getNum() == PEEK_OTHER_9 || activeCard.getNum() == PEEK_OTHER_10)
+            {
+                CmdUpdateMode(Modes.PEEK);
+                peekingSelf = false;
+            }
+            else if (activeCard.getNum() == BLIND_SWAP_J || activeCard.getNum() == BLIND_SWAP_Q)
+            {
+                CmdUpdateMode(Modes.SWAP);
+                pickingSelfForSwap = true;
+                swapIsBlind = true;
+            }
+            else if (activeCard.getNum() == SEE_SWAP_K)
+            {
+                CmdUpdateMode(Modes.SWAP);
+                pickingSelfForSwap = true;
+                swapIsBlind = false;
+            }
+            activeCard = null;
+        }
+        else if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null &&
+            hit.transform.GetComponent<HandCard>().getOwner() == this)
+        {
+            Debug.Log("replacing " + hit.transform);
+            Card oldCard = hit.transform.GetComponent<HandCard>().getCard();
+            hit.transform.GetComponent<HandCard>().CmdSetCard(activeCard.gameObject);
+            discard.CmdAddCard(oldCard.gameObject);
+            //TODO add animations for replacing card and discarding old card
+            CmdUpdateMode(Modes.WAITING);
+            control.CmdNextPlayerTurn();
+            Debug.Log("waiting");
+        }
+    }
+
+    void exePeek(RaycastHit hit)
+    {
+        if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
+        {
+            if ((peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() == this) ||
+                (!peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() != this))
+            {
+                Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
+                Debug.Log("peeked at " + peekCard.toString());
+                //TODO play animation of revealing card
+                CmdUpdateMode(Modes.WAITING);
+                control.CmdNextPlayerTurn();
+            }
+        }
+        else if (hit.transform.tag == "Discard")
+        {
+            oldMode = mode;
+            CmdUpdateMode(Modes.DOUBLING);
+            Debug.Log("doubling");
+        }
+    }
+
+    void exeSwap(RaycastHit hit)
+    {
+        if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
+        {
+            if (pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() == this)
+            {
+                Debug.Log("picked " + hit.transform + " first");
+                swapSpot1 = hit.transform.GetComponent<HandCard>();
+                pickingSelfForSwap = false;
+                //TODO picked card and other cards
+            }
+            else if (!pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() != this)
+            {
+                swapSpot2 = hit.transform.GetComponent<HandCard>();
+                Debug.Log("picked " + hit.transform + " second");
+
+                Card swap1 = swapSpot1.getCard();
+                Card swap2 = swapSpot2.getCard();
+
+                if (!swapIsBlind)
+                {
+                    
+                    Debug.Log("maybe swap " + swap1.toString() + " and " + swap2.toString());
+                    //TODO reveal the cards and prompt user if they want to swap
+                    //if they do, then do same as in else block
+                    //if not, then play animation for putting cards down and do nothing
+                }
+                else
+                {
+                    swapSpot1.CmdSetCard(swap2.gameObject);
+                    swapSpot2.CmdSetCard(swap1.gameObject);
+                    //TODO play animation
+                }
+                pickingSelfForSwap = true;
+                CmdUpdateMode(Modes.WAITING);
+                Debug.Log("waiting");
+                control.CmdNextPlayerTurn();
+            }
+        }
+        else if (hit.transform.tag == "Discard")
+        {
+            oldMode = mode;
+            CmdUpdateMode(Modes.DOUBLING);
+            Debug.Log("doubling");
+        }
+    }
+
+    void exeWaiting(RaycastHit hit)
+    {
+        if (hit.transform.tag == "Discard" && discard.peekTop() != null)
+        {
+            oldMode = mode;
+            CmdUpdateMode(Modes.DOUBLING);
+            Debug.Log("doubling");
+        }
+    }
+
+    void exeDoubling(RaycastHit hit)
+    {
+        if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
+        {
+            doubleSpot = hit.transform.GetComponent<HandCard>(); //need to remember the spot across calls
+            Card doubleCard = doubleSpot.getCard();
+            if (doubleCard.getNum() == discard.peekTop().getNum())
+            {
+                discard.CmdAddCard(doubleCard.gameObject);
+                doubleSpot.CmdSetCard(null); //remove card from handcard
+                                          //TODO play animation for moving card from handcard to discard
+                if (doubleSpot.getOwner() != this)
+                {
+                    CmdUpdateMode(Modes.REPLACING);
+                    //TODO highlight own cards
+                    Debug.Log("replacing");
+                }
+                else
+                {
+                    CmdUpdateMode(oldMode);
+                }
+            }
+            else //double incorrect, add top of discard to player's empty spot
+            {
+                HandCard moveDest = FindEmptyHandCard();
+                if (moveDest == null)
+                {
+                    //lose
+                }
+                else
+                {
+                    addCard(moveDest, discard.peekTop());
+                    Debug.Log("moving to " + moveDest);
+                    //play animation of moving card from discard to moveDest
+                    CmdUpdateMode(oldMode);
+                }
+            }
+        }
+        else if (hit.transform.tag == "Discard")
+        {
+            CmdUpdateMode(oldMode);
+            Debug.Log(oldMode);
+        }
+    }
+
+    void exeReplacing(RaycastHit hit)
+    {
+        if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
+        {
+            HandCard replacingSpot = hit.transform.GetComponent<HandCard>();
+            if (replacingSpot.getOwner() == this)
+            {
+                doubleSpot.CmdSetCard(replacingSpot.getCard().gameObject);
+                replacingSpot.CmdSetCard(null);
+                //TODO play animation for moving card from handcard to handcard
+                CmdUpdateMode(oldMode);
+                //TODO unhighlight own cards
+            }
+        }
+    }
+
+    [Command]
+    void CmdUpdateMode(Modes m)
+    {
+        mode = m;
+    }
+
     [ClientRpc]
     public void RpcBegin()
     {
         mode = Modes.BEGIN;
-        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
-        discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
         Debug.Log("begin");
     }
 
@@ -355,17 +412,20 @@ public class PlayerScript : NetworkBehaviour {
         Debug.Log("draw");
     }
 
-    public HandCard addCard(Card card)
+    public HandCard FindEmptyHandCard()
     {
-        for(int i = 0; i < hand.Length; i++)
+        for (int i = 0; i < hand.Length; i++)
         {
-            if(hand[i].getCard() == null)
+            if (hand[i].getCard() == null)
             {
-                hand[i].setCard(card);
                 return hand[i];
             }
         }
-
         return null;
+    }
+    
+    public void addCard(HandCard handToFill, Card card)
+    {
+        handToFill.CmdSetCard(card.gameObject);
     }
 }

@@ -8,15 +8,20 @@ public class Controller : NetworkBehaviour {
     const int STARTING_HAND_SIZE = 4;
     
     PlayerScript[] players;
+
+    [SyncVar]
     int numPlayers = 0;
+    [SyncVar]
     int currPlayerInd = 0;
-    bool nextPlayer = false;
 
     public GameObject deckObj;
     Deck deck;
     public GameObject discardObj;
     Discard discard;
 
+    [SyncVar]
+    bool decking;
+    [SyncVar]
     bool beginning;
 
 	// Use this for initialization
@@ -24,14 +29,22 @@ public class Controller : NetworkBehaviour {
         players = new PlayerScript[MAX_PLAYERS];
         deck = deckObj.GetComponent<Deck>();
         discard = discardObj.GetComponent<Discard>();
-        beginning = true;
+        decking = true;
+        beginning = false;
     }
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
-        if(beginning)
+        if(decking)
         {
-            //TODO not working with multiple players
+            if(deck.isReady())
+            {
+                CmdStartGame();
+                decking = false;
+            }
+        }
+        if(isServer && beginning)
+        {
             for(int i = 0; i < numPlayers; i++)
             {
                 if(!players[i].isWaiting())
@@ -41,24 +54,14 @@ public class Controller : NetworkBehaviour {
                 if(i == numPlayers - 1)
                 {
                     beginning = false;
-                    nextPlayer = true;
+                    CmdNextPlayerTurn();
                     Debug.Log("beginning game");
                 }
             }
         }
-        if(nextPlayer)
-        {
-            if(deck.size() == 0)
-            {
-                discard.shuffleIntoDeck(deck);
-            }
-            players[currPlayerInd].startTurn();
-            currPlayerInd = (currPlayerInd + 1) % numPlayers;
-            nextPlayer = false;
-        }
 	}
-
-    public void addPlayer(PlayerScript p)
+    
+    public void addPlayer(PlayerScript p) //only the server needs to have a populated players array
     {
         players[numPlayers] = p;
         numPlayers++;
@@ -76,23 +79,29 @@ public class Controller : NetworkBehaviour {
     [Command]
     public void CmdStartGame()
     {
-        deck.CmdStartGame();
-
         foreach (PlayerScript player in players)
         {
             if (player == null) continue;
             for (int i = 0; i < STARTING_HAND_SIZE; i++)
             {
-                HandCard moveDest = player.addCard(deck.drawCard());
-                Debug.Log("moving to " + moveDest);
+                HandCard moveDest = player.FindEmptyHandCard();
+                player.addCard(moveDest, deck.peekTop());
+                deck.RpcPopCard();
                 //TODO animate moving card from deck to moveDest
             }
             player.RpcBegin();
         }
+        beginning = true;
     }
 
-    public void nextPlayerTurn()
+    [Command]
+    public void CmdNextPlayerTurn()
     {
-        nextPlayer = true;
+        if (deck.size() == 0)
+        {
+            discard.CmdShuffleIntoDeck(deck.gameObject);
+        }
+        players[currPlayerInd].startTurn();
+        currPlayerInd = (currPlayerInd + 1) % numPlayers;
     }
 }
