@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 using System.Collections;
 
-public class HandCard : NetworkBehaviour {
+public class HandCard : MonoBehaviour {
     
-    public Card card; //the card at this spot in the hand
+    Card card; //the card at this spot in the hand
     PlayerScript owner; //the player to whom this hand card belongs
 
     public void setOwner(PlayerScript player)
@@ -21,17 +20,10 @@ public class HandCard : NetworkBehaviour {
     {
         return card;
     }
-
-    [Command]
-    public void CmdSetCard(GameObject c)
-    {
-        RpcSetCard(c);
-    }
     
-    [ClientRpc]
-    public void RpcSetCard(GameObject c)
+    public void setCard(Card c)
     {
-        Debug.Log(owner.getName() + ": " + this + " set card to " + c.GetComponent<Card>().toString());
-        card = c.GetComponent<Card>();
+        Debug.Log(owner.getName() + ": " + this + " set card to " + c.toString());
+        card = c;
     }
 }

@@ -37,7 +37,6 @@ public class Deck : NetworkBehaviour {
             shuffleCount = 0;
             for (int i = ACE; i <= KING; i++) //create cards and put them in the deck
             {
-                Debug.Log("at step " + i + " of the for loop");
                 GameObject card = (GameObject)Instantiate(cardPrefab, 
                     this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
@@ -104,9 +103,14 @@ public class Deck : NetworkBehaviour {
     {
         Debug.Log("pushing " + card.GetComponent<Card>().toString() + " to the deck");
         deck.Push(card.GetComponent<Card>());
+        card.transform.position = this.transform.position;
         if(deck.Count == FULL_DECK)
         {
             CmdSetIsReady(true);
+            if (isServer)
+            {
+                GameObject.FindGameObjectWithTag("GameStarter").SetActive(false);
+            }
         }
     }
 
@@ -118,8 +122,7 @@ public class Deck : NetworkBehaviour {
 
     public Card peekTop() //return card on top
     {
-        if (isServer) return deck.Peek(); //will only be called on server
-        else return null;
+        return deck.Peek(); //will only be called on server
     }
 
     [ClientRpc]
@@ -135,7 +138,6 @@ public class Deck : NetworkBehaviour {
     
     public void shuffle()
     {
-        Debug.Log("shuffling");
         Queue<Card>[] queues = new Queue<Card>[NUM_QUEUES]; //queues hold cards while shuffling
         for(int i = 0; i < NUM_QUEUES; i++)
         {

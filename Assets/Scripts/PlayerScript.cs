@@ -123,6 +123,8 @@ public class PlayerScript : NetworkBehaviour {
                 {
                     if(this.isServer && hit.transform.tag == "GameStarter" && deck.isDoneShuffling())
                     {
+                        hit.transform.GetComponentInChildren<TextMesh>().text = "Shuffling";
+                        //shuffling is already done, just need to transfer cards from shuffle deck to normal deck
                         deck.CmdDeckCards();
                     }
                     Debug.Log(this.getName() + " hit " + hit.transform + " while in " + mode);
@@ -239,7 +241,9 @@ public class PlayerScript : NetworkBehaviour {
         {
             Debug.Log("replacing " + hit.transform);
             Card oldCard = hit.transform.GetComponent<HandCard>().getCard();
-            hit.transform.GetComponent<HandCard>().CmdSetCard(activeCard.gameObject);
+
+            int handInd = this.findHandCard(hit.transform.GetComponent<HandCard>());
+            this.CmdSetCard(handInd, activeCard.gameObject);
             discard.CmdAddCard(oldCard.gameObject);
             //TODO add animations for replacing card and discarding old card
             CmdUpdateMode(Modes.WAITING);
@@ -299,8 +303,10 @@ public class PlayerScript : NetworkBehaviour {
                 }
                 else
                 {
-                    swapSpot1.CmdSetCard(swap2.gameObject);
-                    swapSpot2.CmdSetCard(swap1.gameObject);
+                    int swapInd1 = swapSpot1.getOwner().findHandCard(swapSpot1);
+                    int swapInd2 = swapSpot2.getOwner().findHandCard(swapSpot2);
+                    swapSpot1.getOwner().CmdSetCard(swapInd1, swap2.gameObject);
+                    swapSpot2.getOwner().CmdSetCard(swapInd2, swap1.gameObject);
                     //TODO play animation
                 }
                 pickingSelfForSwap = true;
@@ -336,7 +342,8 @@ public class PlayerScript : NetworkBehaviour {
             if (doubleCard.getNum() == discard.peekTop().getNum())
             {
                 discard.CmdAddCard(doubleCard.gameObject);
-                doubleSpot.CmdSetCard(null); //remove card from handcard
+                int handInd = doubleSpot.getOwner().findHandCard(doubleSpot);
+                doubleSpot.getOwner().CmdSetCard(handInd, null); //remove card from handcard
                                           //TODO play animation for moving card from handcard to discard
                 if (doubleSpot.getOwner() != this)
                 {
@@ -351,15 +358,16 @@ public class PlayerScript : NetworkBehaviour {
             }
             else //double incorrect, add top of discard to player's empty spot
             {
-                HandCard moveDest = FindEmptyHandCard();
-                if (moveDest == null)
+                int moveDestInd = FindEmptyHandCard();
+                if (moveDestInd == -1)
                 {
                     //lose
                 }
                 else
                 {
-                    addCard(moveDest, discard.peekTop());
-                    Debug.Log("moving to " + moveDest);
+                    this.CmdSetCard(moveDestInd, discard.peekTop().gameObject);
+                    discard.CmdPopCard();
+                    Debug.Log("moving to hand card " + moveDestInd);
                     //play animation of moving card from discard to moveDest
                     CmdUpdateMode(oldMode);
                 }
@@ -379,8 +387,10 @@ public class PlayerScript : NetworkBehaviour {
             HandCard replacingSpot = hit.transform.GetComponent<HandCard>();
             if (replacingSpot.getOwner() == this)
             {
-                doubleSpot.CmdSetCard(replacingSpot.getCard().gameObject);
-                replacingSpot.CmdSetCard(null);
+                int doubleHandInd = doubleSpot.getOwner().findHandCard(doubleSpot);
+                int replaceHandInd = this.findHandCard(replacingSpot);
+                doubleSpot.getOwner().CmdSetCard(doubleHandInd, replacingSpot.getCard().gameObject);
+                this.CmdSetCard(replaceHandInd, null);
                 //TODO play animation for moving card from handcard to handcard
                 CmdUpdateMode(oldMode);
                 //TODO unhighlight own cards
@@ -412,20 +422,44 @@ public class PlayerScript : NetworkBehaviour {
         Debug.Log("draw");
     }
 
-    public HandCard FindEmptyHandCard()
+    public int findHandCard(HandCard hc)
+    {
+        for(int i = 0; i < hand.Length; i++)
+        {
+            if (hand[i] == hc) return i;
+        }
+        return -1;
+    }
+
+    public int FindEmptyHandCard()
     {
         for (int i = 0; i < hand.Length; i++)
         {
             if (hand[i].getCard() == null)
             {
-                return hand[i];
+                Debug.Log("found empty at ind " + i);
+                return i;
             }
         }
-        return null;
+        return -1;
     }
     
-    public void addCard(HandCard handToFill, Card card)
+    [Command]
+    public void CmdSetCard(int handInd, GameObject card)
     {
-        handToFill.CmdSetCard(card.gameObject);
+        RpcSetCard(handInd, card);
+    }
+
+    [ClientRpc]
+    public void RpcSetCard(int handInd, GameObject card)
+    {
+        if (card != null)
+        {
+            hand[handInd].setCard(card.GetComponent<Card>());
+        }
+        else
+        {
+            hand[handInd].setCard(null);
+        }
     }
 }

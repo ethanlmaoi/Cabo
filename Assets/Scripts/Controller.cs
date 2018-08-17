@@ -35,13 +35,9 @@ public class Controller : NetworkBehaviour {
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
-        if(decking)
+        if (decking && deck.isReady())
         {
-            if(deck.isReady())
-            {
-                CmdStartGame();
-                decking = false;
-            }
+            CmdStartGame();
         }
         if(isServer && beginning)
         {
@@ -79,13 +75,16 @@ public class Controller : NetworkBehaviour {
     [Command]
     public void CmdStartGame()
     {
+        decking = false;
+
         foreach (PlayerScript player in players)
         {
             if (player == null) continue;
             for (int i = 0; i < STARTING_HAND_SIZE; i++)
             {
-                HandCard moveDest = player.FindEmptyHandCard();
-                player.addCard(moveDest, deck.peekTop());
+                Debug.Log("i: " + i + " | starting hand size: " + STARTING_HAND_SIZE);
+                int handInd = player.FindEmptyHandCard();
+                player.RpcSetCard(handInd, deck.peekTop().gameObject);
                 deck.RpcPopCard();
                 //TODO animate moving card from deck to moveDest
             }

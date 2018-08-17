@@ -34,6 +34,12 @@ public class Discard : NetworkBehaviour {
         return discard.Peek();
     }
 
+    [Command]
+    public void CmdPopCard()
+    {
+        RpcPopCard();
+    }
+
     [ClientRpc]
     public void RpcPopCard()
     {

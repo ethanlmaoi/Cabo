@@ -21,6 +21,7 @@ GameObject:
   - 4: {fileID: 4000010650704392}
   - 65: {fileID: 65000010334616430}
   - 114: {fileID: 114000013550028232}
+  - 114: {fileID: 114000012509852844}
   m_Layer: 0
   m_Name: Hand Card 1
   m_TagString: HandCard
@@ -55,6 +56,7 @@ GameObject:
   - 4: {fileID: 4000012253107962}
   - 65: {fileID: 65000010543700524}
   - 114: {fileID: 114000013915911110}
+  - 114: {fileID: 114000011560881534}
   m_Layer: 0
   m_Name: Hand Card 4
   m_TagString: HandCard
@@ -125,6 +127,7 @@ GameObject:
   - 4: {fileID: 4000014255746702}
   - 65: {fileID: 65000010098062556}
   - 114: {fileID: 114000010263380004}
+  - 114: {fileID: 114000012974089326}
   m_Layer: 0
   m_Name: Extra Card 2
   m_TagString: HandCard
@@ -159,6 +162,7 @@ GameObject:
   - 4: {fileID: 4000012047199012}
   - 65: {fileID: 65000010790430346}
   - 114: {fileID: 114000014013963472}
+  - 114: {fileID: 114000010240854930}
   m_Layer: 0
   m_Name: Hand Card 3
   m_TagString: HandCard
@@ -194,6 +198,7 @@ GameObject:
   - 4: {fileID: 4000011892888462}
   - 65: {fileID: 65000012954332210}
   - 114: {fileID: 114000012890984000}
+  - 114: {fileID: 114000011731177252}
   m_Layer: 0
   m_Name: Extra Card 1
   m_TagString: HandCard
@@ -211,6 +216,7 @@ GameObject:
   - 4: {fileID: 4000012355242694}
   - 65: {fileID: 65000012740408656}
   - 114: {fileID: 114000011115874602}
+  - 114: {fileID: 114000011846054894}
   m_Layer: 0
   m_Name: Hand Card 2
   m_TagString: HandCard
@@ -649,6 +655,38 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011110649422}
   m_Enabled: 1
+--- !u!114 &114000010240854930
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012663222772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114000010263380004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -725,6 +763,134 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   card: {fileID: 0}
+--- !u!114 &114000011560881534
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010704224634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114000011731177252
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012804037358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114000011846054894
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012844309210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114000012509852844
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010485413140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 217
+    i1: 22
+    i2: 9
+    i3: 95
+    i4: 155
+    i5: 78
+    i6: 119
+    i7: 228
+    i8: 59
+    i9: 170
+    i10: 83
+    i11: 206
+    i12: 106
+    i13: 143
+    i14: 139
+    i15: 51
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114000012890984000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -737,6 +903,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   card: {fileID: 0}
+--- !u!114 &114000012974089326
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011988827456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114000013031900908
 MonoBehaviour:
   m_ObjectHideFlags: 1
