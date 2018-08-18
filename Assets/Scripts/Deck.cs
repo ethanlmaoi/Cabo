@@ -15,9 +15,7 @@ public class Deck : NetworkBehaviour {
     Stack<Card> deck;
     public GameObject cardPrefab;
 
-    Stack<Card> shuffleDeck; //shuffling looks bad onscreen so do it offscreen
-
-    Controller control;
+    Stack<GameObject> shuffleDeck; //shuffling looks bad onscreen so do it offscreen
 
     [SyncVar]
     bool doneShuffling;
@@ -28,46 +26,45 @@ public class Deck : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
         deck = new Stack<Card>();
-        control = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
 
-        shuffleDeck = new Stack<Card>();
+        shuffleDeck = new Stack<GameObject>();
+        
         if(isServer)
         {
             deckIsReady = false;
             shuffleCount = 0;
             for (int i = ACE; i <= KING; i++) //create cards and put them in the deck
             {
-                Debug.Log("at step " + i + " of the for loop");
-                GameObject card = (GameObject)Instantiate(cardPrefab, 
+                GameObject card = (GameObject)Instantiate(cardPrefab,
                     this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.DIAMONDS);
                 NetworkServer.Spawn(card);
-                shuffleDeck.Push(card.GetComponent<Card>());
+                shuffleDeck.Push(card);
 
                 card = (GameObject)Instantiate(cardPrefab,
                     this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.CLUBS);
                 NetworkServer.Spawn(card);
-                shuffleDeck.Push(card.GetComponent<Card>());
+                shuffleDeck.Push(card);
 
                 card = (GameObject)Instantiate(cardPrefab,
                     this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.HEARTS);
                 NetworkServer.Spawn(card);
-                shuffleDeck.Push(card.GetComponent<Card>());
+                shuffleDeck.Push(card);
 
                 card = (GameObject)Instantiate(cardPrefab,
                     this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.SPADES);
                 NetworkServer.Spawn(card);
-                shuffleDeck.Push(card.GetComponent<Card>());
+                shuffleDeck.Push(card);
             }
 
-            for(int i = 0; i < TIMES_TO_SHUFFLE; i++)
+            for (int i = 0; i < TIMES_TO_SHUFFLE; i++)
             {
                 shuffle();
             }
@@ -95,7 +92,7 @@ public class Deck : NetworkBehaviour {
     {
         while(shuffleDeck.Count > 0)
         {
-            RpcAddCard(shuffleDeck.Pop().gameObject);
+            RpcAddCard(shuffleDeck.Pop());
         }
     }
 
@@ -104,28 +101,34 @@ public class Deck : NetworkBehaviour {
     {
         Debug.Log("pushing " + card.GetComponent<Card>().toString() + " to the deck");
         deck.Push(card.GetComponent<Card>());
-        if(deck.Count == FULL_DECK)
+        card.transform.position = this.transform.position;
+        if(deck.Count == FULL_DECK && isServer)
         {
-            CmdSetIsReady(true);
+            deckIsReady = true;
+            GameObject.FindGameObjectWithTag("GameStarter").SetActive(false);
+            
         }
     }
-
-    [Command]
-    public void CmdPopCard() //allows clients to tell the server to pop a card across clients
-    {
-        RpcPopCard();
-    }
-
+    
     public Card peekTop() //return card on top
     {
-        if (isServer) return deck.Peek(); //will only be called on server
-        else return null;
+        return deck.Peek(); //will only be called on server
+    }
+
+    public void popCard() //allows clients to tell the server to pop a card across clients
+    {
+        if (isServer) RpcPopCard();
     }
 
     [ClientRpc]
     public void RpcPopCard()//draw a card from the deck
     {
         deck.Pop();
+    }
+
+    public Card drawCard() //only used in dealing cards at the beginning
+    {
+        return deck.Pop();
     }
 
     public int size()
@@ -135,11 +138,10 @@ public class Deck : NetworkBehaviour {
     
     public void shuffle()
     {
-        Debug.Log("shuffling");
-        Queue<Card>[] queues = new Queue<Card>[NUM_QUEUES]; //queues hold cards while shuffling
+        Queue<GameObject>[] queues = new Queue<GameObject>[NUM_QUEUES]; //queues hold cards while shuffling
         for(int i = 0; i < NUM_QUEUES; i++)
         {
-            queues[i] = new Queue<Card>();
+            queues[i] = new Queue<GameObject>();
         }
 
         System.Random rand = new System.Random();

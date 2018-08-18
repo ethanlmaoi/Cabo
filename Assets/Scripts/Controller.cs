@@ -35,13 +35,9 @@ public class Controller : NetworkBehaviour {
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
-        if(decking)
+        if (isServer && decking && deck.isReady())
         {
-            if(deck.isReady())
-            {
-                CmdStartGame();
-                decking = false;
-            }
+            CmdStartGame();
         }
         if(isServer && beginning)
         {
@@ -54,7 +50,7 @@ public class Controller : NetworkBehaviour {
                 if(i == numPlayers - 1)
                 {
                     beginning = false;
-                    CmdNextPlayerTurn();
+                    nextPlayerTurn();
                     Debug.Log("beginning game");
                 }
             }
@@ -79,14 +75,14 @@ public class Controller : NetworkBehaviour {
     [Command]
     public void CmdStartGame()
     {
+        decking = false;
+
         foreach (PlayerScript player in players)
         {
             if (player == null) continue;
             for (int i = 0; i < STARTING_HAND_SIZE; i++)
             {
-                HandCard moveDest = player.FindEmptyHandCard();
-                player.addCard(moveDest, deck.peekTop());
-                deck.RpcPopCard();
+                player.RpcDealCard(i);
                 //TODO animate moving card from deck to moveDest
             }
             player.RpcBegin();
@@ -94,13 +90,18 @@ public class Controller : NetworkBehaviour {
         beginning = true;
     }
 
-    [Command]
-    public void CmdNextPlayerTurn()
+    public void nextPlayerTurn()
     {
+        if(!isServer)
+        {
+            Debug.Log("nonserver controller trying to start next player turn");
+            return;
+        }
         if (deck.size() == 0)
         {
             discard.CmdShuffleIntoDeck(deck.gameObject);
         }
+        Debug.Log("setting " + players[currPlayerInd].getName() + " to start turn");
         players[currPlayerInd].startTurn();
         currPlayerInd = (currPlayerInd + 1) % numPlayers;
     }

@@ -11,7 +11,9 @@ public class Card : NetworkBehaviour {
 
     public enum Suit { DIAMONDS, CLUBS, HEARTS, SPADES }
 
+    [SyncVar]
     int num;
+    [SyncVar]
     Suit suit;
     bool isFlipped;
     
