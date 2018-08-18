@@ -35,7 +35,7 @@ public class Controller : NetworkBehaviour {
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
-        if (decking && deck.isReady())
+        if (isServer && decking && deck.isReady())
         {
             CmdStartGame();
         }
@@ -50,7 +50,7 @@ public class Controller : NetworkBehaviour {
                 if(i == numPlayers - 1)
                 {
                     beginning = false;
-                    CmdNextPlayerTurn();
+                    nextPlayerTurn();
                     Debug.Log("beginning game");
                 }
             }
@@ -82,10 +82,7 @@ public class Controller : NetworkBehaviour {
             if (player == null) continue;
             for (int i = 0; i < STARTING_HAND_SIZE; i++)
             {
-                Debug.Log("i: " + i + " | starting hand size: " + STARTING_HAND_SIZE);
-                int handInd = player.FindEmptyHandCard();
-                player.RpcSetCard(handInd, deck.peekTop().gameObject);
-                deck.RpcPopCard();
+                player.RpcDealCard(i);
                 //TODO animate moving card from deck to moveDest
             }
             player.RpcBegin();
@@ -93,13 +90,18 @@ public class Controller : NetworkBehaviour {
         beginning = true;
     }
 
-    [Command]
-    public void CmdNextPlayerTurn()
+    public void nextPlayerTurn()
     {
+        if(!isServer)
+        {
+            Debug.Log("nonserver controller trying to start next player turn");
+            return;
+        }
         if (deck.size() == 0)
         {
             discard.CmdShuffleIntoDeck(deck.gameObject);
         }
+        Debug.Log("setting " + players[currPlayerInd].getName() + " to start turn");
         players[currPlayerInd].startTurn();
         currPlayerInd = (currPlayerInd + 1) % numPlayers;
     }

@@ -17,6 +17,11 @@ public class Discard : NetworkBehaviour {
 	
 	}
 
+    public void addCard(GameObject card)
+    {
+        if(isServer) RpcAddCard(card);
+    }
+
     [Command]
     public void CmdAddCard(GameObject card) //allows clients to tell other clients to discard a card
     {
