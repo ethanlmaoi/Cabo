@@ -24,6 +24,8 @@ GameObject:
   - component: {fileID: 114710536226047302}
   - component: {fileID: 114872518991449788}
   - component: {fileID: 61647177511920238}
+  - component: {fileID: 114843780128256000}
+  - component: {fileID: 114602713788382154}
   m_Layer: 0
   m_Name: cardPrefab
   m_TagString: Untagged
@@ -87,6 +89,27 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114602713788382154
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1733271534344688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 1
+  m_SendInterval: 0.1
+  m_SyncRotationAxis: 7
+  m_RotationSyncCompression: 0
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_VelocityThreshold: 0.0001
+  m_SnapThreshold: 5
+  m_InterpolateRotation: 1
+  m_InterpolateMovement: 1
 --- !u!114 &114710536226047302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -98,6 +121,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 597dfcfc28f4afb4bb9e809c8018e1be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114843780128256000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1733271534344688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 46
+    i1: 74
+    i2: 60
+    i3: 80
+    i4: 65
+    i5: 4
+    i6: 174
+    i7: 228
+    i8: 168
+    i9: 176
+    i10: 173
+    i11: 167
+    i12: 164
+    i13: 210
+    i14: 95
+    i15: 254
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114872518991449788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -109,10 +164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605367f5b0c7a1c4d95053dff347992e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  num: 13
-  suit: 2
-  isFlipped: 0
-  target: {fileID: 0}
 --- !u!212 &212988936286088156
 SpriteRenderer:
   m_ObjectHideFlags: 1

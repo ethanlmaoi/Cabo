@@ -64,7 +64,7 @@ public class PlayerScript : NetworkBehaviour {
             int ind = -1;
             switch(hc.transform.name)
             {
-                case "Hand Card 1":
+                case "Hand Card 1": // setting Hand Card 1 object to be hand[0]
                     ind = 0;
                     break;
                 case "Hand Card 2":
@@ -490,6 +490,11 @@ public class PlayerScript : NetworkBehaviour {
     [ClientRpc]
     public void RpcDealCard(int handInd)
     {
-        hand[handInd].setCard(deck.drawCard());
+        Card card = deck.drawCard();
+        hand[handInd].setCard(card);
+
+        // animation to deal cards
+        card.GetComponent<AssetRenderer>().moveCard(card.GetComponent<Card>(), hand[handInd]);
+        Debug.Log("RHEEEEEEEEEEE: " + hand[handInd].transform.name);
     }
 }

@@ -20,6 +20,11 @@ public class AssetRenderer : MonoBehaviour {
     float speed = 10.0f;
     Transform target;
 
+    bool moveToHandCard1;
+    bool moveToHandCard2;
+    bool moveToHandCard3;
+    bool moveToHandCard4;
+
     void Start()
     {
         // initialize number names (append strings to find files more efficiently)
@@ -117,10 +122,25 @@ public class AssetRenderer : MonoBehaviour {
         }
 
         // moves the card if player clicks
-        if (move)
+        if (moveToHandCard1) //&& transform.position != new Vector3(-2.55f, 1.5f, 0f))
         {
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, target.position, step);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-2.55f, 3.5f, 0f), step);
+        }
+        else if (moveToHandCard2)
+        {
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-0.85f, 3.5f, 0f), step);
+        }
+        else if (moveToHandCard3)
+        {
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(0.85f, 3.5f, 0f), step);
+        }
+        else if (moveToHandCard4)
+        {
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(2.55f, 3.5f, 0f), step);
         }
     }
 
@@ -134,6 +154,26 @@ public class AssetRenderer : MonoBehaviour {
     void moveCard()
     {
         move = true;
+    }
+
+    public void moveCard(Card card, HandCard hc)
+    {
+        if (hc.transform.name == "Hand Card 1")
+        {
+            moveToHandCard1 = true;
+        }
+        else if (hc.transform.name == "Hand Card 2")
+        {
+            moveToHandCard2 = true;
+        }
+        else if (hc.transform.name == "Hand Card 3")
+        {
+            moveToHandCard3 = true;
+        }
+        else if (hc.transform.name == "Hand Card 4")
+        {
+            moveToHandCard4 = true;
+        }
     }
 
 
