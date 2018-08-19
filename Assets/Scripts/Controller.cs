@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Controller : NetworkBehaviour {
 
     const int MAX_PLAYERS = 2;
     const int STARTING_HAND_SIZE = 4;
+    const int MAX_HAND_VALUE = 74; //two black kings and four queens
     
     PlayerScript[] players;
 
@@ -24,6 +26,11 @@ public class Controller : NetworkBehaviour {
     [SyncVar]
     bool beginning;
 
+    [SyncVar]
+    bool cambrioCalled;
+    [SyncVar]
+    int cambrioInd;
+
 	// Use this for initialization
 	void Start () {
         players = new PlayerScript[MAX_PLAYERS];
@@ -35,11 +42,15 @@ public class Controller : NetworkBehaviour {
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
-        if (isServer && decking && deck.isReady())
+        if(!isServer)
+        {
+            return;
+        }
+        if (decking && deck.isReady())
         {
             CmdStartGame();
         }
-        if(isServer && beginning)
+        if(beginning)
         {
             for(int i = 0; i < numPlayers; i++)
             {
@@ -99,10 +110,63 @@ public class Controller : NetworkBehaviour {
         }
         if (deck.size() == 0)
         {
-            discard.CmdShuffleIntoDeck(deck.gameObject);
+            Debug.Log("shufflign discard into deck");
+            discard.shuffleIntoDeck(deck);
         }
-        Debug.Log("setting " + players[currPlayerInd].getName() + " to start turn");
-        players[currPlayerInd].startTurn();
         currPlayerInd = (currPlayerInd + 1) % numPlayers;
+        if (cambrioCalled && currPlayerInd == cambrioInd)
+        {
+            finishGame();
+        }
+        else
+        {
+            Debug.Log("setting " + players[currPlayerInd].getName() + " to start turn");
+            players[currPlayerInd].startTurn();
+        }
+        
+    }
+
+    public bool cambrioIsCalled()
+    {
+        return cambrioCalled;
+    }
+
+    public void callCambrio()
+    {
+        cambrioCalled = true;
+        cambrioInd = currPlayerInd;
+    }
+
+    public void finishGame()
+    {
+        int minScore = MAX_HAND_VALUE;
+        Queue<int> minIndices = new Queue<int>();
+        int score;
+        for(int i = 0; i < numPlayers; i++)
+        {
+            score = players[i].getScore();
+            if(score < minScore)
+            {
+                minScore = score;
+                minIndices.Clear();
+                minIndices.Enqueue(i);
+            }
+            if(score == minScore)
+            {
+                minIndices.Enqueue(i);
+            }
+        }
+        if (minIndices.Count > 1)
+        {
+            while (minIndices.Count > 1)
+            {
+                Debug.Log(players[minIndices.Dequeue()].getName() + " and ");
+            }
+            Debug.Log(players[minIndices.Dequeue()].getName() + " tie with " + minScore);
+        }
+        else
+        {
+            Debug.Log(players[minIndices.Dequeue()].getName() + " wins with " + minScore);
+        }
     }
 }

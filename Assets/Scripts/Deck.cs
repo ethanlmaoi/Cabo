@@ -7,10 +7,9 @@ using System;
 public class Deck : NetworkBehaviour {
     const int ACE = 1;
     const int KING = 13;
-    const int FULL_DECK = 52;
     const int NUM_QUEUES = 5;
     const int OFFSCREEN_OFFSET = 30;
-    const int TIMES_TO_SHUFFLE = 2;
+    const int TIMES_TO_SHUFFLE = 3;
     
     Stack<Card> deck;
     public GameObject cardPrefab;
@@ -21,7 +20,6 @@ public class Deck : NetworkBehaviour {
     bool doneShuffling;
     [SyncVar]
     bool deckIsReady;
-    int shuffleCount;
 
 	// Use this for initialization
 	void Start () {
@@ -32,7 +30,6 @@ public class Deck : NetworkBehaviour {
         if(isServer)
         {
             deckIsReady = false;
-            shuffleCount = 0;
             for (int i = ACE; i <= KING; i++) //create cards and put them in the deck
             {
                 GameObject card = (GameObject)Instantiate(cardPrefab,
@@ -64,10 +61,8 @@ public class Deck : NetworkBehaviour {
                 shuffleDeck.Push(card);
             }
 
-            for (int i = 0; i < TIMES_TO_SHUFFLE; i++)
-            {
-                shuffle();
-            }
+            shuffle();
+            GameObject.FindGameObjectWithTag("GameStarter").GetComponentInChildren<TextMesh>().text = "Start Game";
         }
 	}
 
@@ -80,16 +75,13 @@ public class Deck : NetworkBehaviour {
     {
         return deckIsReady;
     }
-
-    [Command]
-    public void CmdSetIsReady(bool b)
+    
+    public void deckCards()
     {
-        deckIsReady = b;
-    }
-
-    [Command]
-    public void CmdDeckCards()
-    {
+        if(!isServer)
+        {
+            return;
+        }
         while(shuffleDeck.Count > 0)
         {
             RpcAddCard(shuffleDeck.Pop());
@@ -99,13 +91,14 @@ public class Deck : NetworkBehaviour {
     [ClientRpc]
     public void RpcAddCard(GameObject card) //add a card to the deck
     {
-        Debug.Log("pushing " + card.GetComponent<Card>().toString() + " to the deck");
+        //Debug.Log("pushing " + card.GetComponent<Card>().toString() + " to the deck");
         deck.Push(card.GetComponent<Card>());
-        card.transform.position = this.transform.position;
-        if(deck.Count == FULL_DECK && isServer)
+        card.transform.position = this.transform.position; //TODO remove after frontend and backend combined
+        if(isServer && shuffleDeck.Count == 0)
         {
             deckIsReady = true;
-            GameObject.FindGameObjectWithTag("GameStarter").SetActive(false);
+            GameObject gameStarter = GameObject.FindGameObjectWithTag("GameStarter");
+            if(gameStarter != null) gameStarter.SetActive(false);
             
         }
     }
@@ -139,40 +132,44 @@ public class Deck : NetworkBehaviour {
     public void shuffle()
     {
         Queue<GameObject>[] queues = new Queue<GameObject>[NUM_QUEUES]; //queues hold cards while shuffling
-        for(int i = 0; i < NUM_QUEUES; i++)
-        {
-            queues[i] = new Queue<GameObject>();
-        }
-
         System.Random rand = new System.Random();
-        while (shuffleDeck.Count > 0) //randomly distribute deck into 5 queues
-        {
-            int ind = rand.Next(queues.Length);
-            queues[ind].Enqueue(shuffleDeck.Pop());
-        }
 
-        int queuesInUse = queues.Length; //tracks number of nonempty queues
-        while (queues[0] != null) //while at least one queue is nonempty
+        for (int i = 0; i < TIMES_TO_SHUFFLE; i++)
         {
-            int ind = rand.Next(queuesInUse); //randomly pick a queue from which to pull
-            if (queues[ind].Count > 0) shuffleDeck.Push(queues[ind].Dequeue());
-            if (queues[ind].Count == 0) //if the queue is now empty, null it out and move everything down
+            for (int q = 0; q < NUM_QUEUES; q++)
             {
-                queues[ind] = null;
-                for(int i = ind + 1; i < queues.Length; i++)
+                queues[q] = new Queue<GameObject>();
+            }
+
+            while (shuffleDeck.Count > 0) //randomly distribute deck into 5 queues
+            {
+                int ind = rand.Next(queues.Length);
+                queues[ind].Enqueue(shuffleDeck.Pop());
+            }
+
+            int queuesInUse = queues.Length; //tracks number of nonempty queues
+            while (queues[0] != null) //while at least one queue is nonempty
+            {
+                int ind = rand.Next(queuesInUse); //randomly pick a queue from which to pull
+                if (queues[ind].Count > 0) shuffleDeck.Push(queues[ind].Dequeue());
+                if (queues[ind].Count == 0) //if the queue is now empty, null it out and move everything down
                 {
-                    queues[i - 1] = queues[i];
-                    queues[i] = null;
+                    queues[ind] = null;
+                    for (int j = ind + 1; j < queues.Length; j++)
+                    {
+                        queues[j - 1] = queues[j];
+                        queues[j] = null;
+                    }
+                    queuesInUse--; //decrement nonempty queue tracker
                 }
-                queuesInUse--; //decrement nonempty queue tracker
             }
         }
 
-        shuffleCount++;
-        if (shuffleCount == TIMES_TO_SHUFFLE)
-        {
-            doneShuffling = true;
-            GameObject.FindGameObjectWithTag("GameStarter").GetComponentInChildren<TextMesh>().text = "Start Game";
-        }
+        doneShuffling = true;
+    }
+
+    public void addToShuffleDeck(GameObject c)
+    {
+        shuffleDeck.Push(c);
     }
 }

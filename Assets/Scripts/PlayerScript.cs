@@ -5,7 +5,7 @@ using System.Collections;
 public class PlayerScript : NetworkBehaviour {
 
     const int HAND_MAX = 6;
-    enum Modes { SPAWN, BEGIN, DRAW, TURN, PEEK, SWAP, WAITING, DOUBLING, REPLACING };
+    enum Modes { SPAWN, BEGIN, DRAW, TURN, PEEK, SWAP, WAITING, DOUBLING, REPLACING, CAMBRIO };
     const int PEEK_SELF_7 = 7;
     const int PEEK_SELF_8 = 8;
     const int PEEK_OTHER_9 = 9;
@@ -127,7 +127,7 @@ public class PlayerScript : NetworkBehaviour {
                     {
                         hit.transform.GetComponentInChildren<TextMesh>().text = "Shuffling";
                         //shuffling is already done, just need to transfer cards from shuffle deck to normal deck
-                        deck.CmdDeckCards();
+                        deck.deckCards();
                     }
                     Debug.Log(this.getName() + " hit " + hit.transform + " while in " + mode);
                     switch (mode)
@@ -201,6 +201,11 @@ public class PlayerScript : NetworkBehaviour {
             CmdUpdateMode(Modes.DOUBLING);
             Debug.Log("doubling");
         }
+        else if (hit.transform.tag == "Cambrio" && !control.cambrioIsCalled())
+        {
+            this.CmdCallCambrio();
+            Debug.Log("cambrio");
+        }
     }
 
     void exeTurn(RaycastHit hit)
@@ -251,7 +256,7 @@ public class PlayerScript : NetworkBehaviour {
 
             int handInd = this.findHandCard(hit.transform.GetComponent<HandCard>());
             this.CmdSetCard(handInd, activeCard.gameObject);
-            discard.CmdAddCard(oldCard.gameObject);
+            this.CmdDiscardCard(oldCard.gameObject);
             //TODO add animations for replacing card and discarding old card
             this.CmdFinishTurn();
             Debug.Log("waiting");
@@ -291,7 +296,8 @@ public class PlayerScript : NetworkBehaviour {
                 pickingSelfForSwap = false;
                 //TODO picked card and other cards
             }
-            else if (!pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() != this)
+            else if (!pickingSelfForSwap && hit.transform.GetComponent<HandCard>().getOwner() != this &&
+                !hit.transform.GetComponent<HandCard>().getOwner().isCambrio())
             {
                 swapSpot2 = hit.transform.GetComponent<HandCard>();
                 Debug.Log("picked " + hit.transform + " second");
@@ -340,13 +346,14 @@ public class PlayerScript : NetworkBehaviour {
 
     void exeDoubling(RaycastHit hit)
     {
-        if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null)
+        if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null &&
+            !hit.transform.GetComponent<HandCard>().getOwner().isCambrio())
         {
             doubleSpot = hit.transform.GetComponent<HandCard>(); //need to remember the spot across calls
             Card doubleCard = doubleSpot.getCard();
             if (doubleCard.getNum() == discard.peekTop().getNum())
             {
-                discard.CmdAddCard(doubleCard.gameObject);
+                this.CmdDiscardCard(doubleCard.gameObject);
                 int handInd = doubleSpot.getOwner().findHandCard(doubleSpot);
                 doubleSpot.getOwner().CmdSetCard(handInd, null); //remove card from handcard
                                           //TODO play animation for moving card from handcard to discard
@@ -371,7 +378,7 @@ public class PlayerScript : NetworkBehaviour {
                 else
                 {
                     this.CmdSetCard(moveDestInd, discard.peekTop().gameObject);
-                    discard.CmdPopCard();
+                    this.CmdPopDiscard();
                     Debug.Log("moving to hand card " + moveDestInd);
                     //play animation of moving card from discard to moveDest
                     CmdUpdateMode(oldMode);
@@ -421,6 +428,11 @@ public class PlayerScript : NetworkBehaviour {
         return mode == Modes.WAITING;
     }
 
+    public bool isCambrio()
+    {
+        return mode == Modes.CAMBRIO;
+    }
+
     public void startTurn()
     {
         mode = Modes.DRAW;
@@ -440,10 +452,34 @@ public class PlayerScript : NetworkBehaviour {
     }
 
     [Command]
+    public void CmdPopDiscard()
+    {
+        discard.popCard();
+    }
+
+    [Command]
     public void CmdFinishTurn()
     {
         mode = Modes.WAITING;
         control.nextPlayerTurn();
+    }
+
+    [Command]
+    public void CmdCallCambrio()
+    {
+        control.callCambrio();
+        mode = Modes.CAMBRIO;
+        control.nextPlayerTurn();
+    }
+
+    public int getScore()
+    {
+        int score = 0;
+        for(int i = 0; i < hand.Length; i++)
+        {
+            if (hand[i].getCard() != null) score += hand[i].getCard().getValue();
+        }
+        return score;
     }
 
     public int findHandCard(HandCard hc)
