@@ -20,6 +20,13 @@ public class AssetRenderer : MonoBehaviour {
     float speed = 10.0f;
     Transform target;
 
+    const float HAND_CARD_1_X_POS = -2.55f;
+    const float HAND_CARD_2_X_POS = -0.85f;
+    const float HAND_CARD_3_X_POS = 0.85f;
+    const float HAND_CARD_4_X_POS = 2.55f;
+    const float HAND_CARD_Y_POS = 3.5f;
+    const float DEFAULT_Z_POS = 0.0f;
+
     bool moveToHandCard1;
     bool moveToHandCard2;
     bool moveToHandCard3;
@@ -112,6 +119,7 @@ public class AssetRenderer : MonoBehaviour {
 
     void Update()
     {
+        // toggleCard method (DEBUG PURPOSES)
         if (gameObject.GetComponent<Card>().checkFlipped()) // flips card up if true
         {
             gameObject.GetComponent<Animator>().SetBool("flippedUp", true);
@@ -121,30 +129,37 @@ public class AssetRenderer : MonoBehaviour {
             gameObject.GetComponent<Animator>().SetBool("flippedUp", false);
         }
 
-        // moves the card if player clicks
-        if (moveToHandCard1) //&& transform.position != new Vector3(-2.55f, 1.5f, 0f))
+        // dealHandCard method
+        if (moveToHandCard1 && transform.position != new Vector3(HAND_CARD_1_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-2.55f, 3.5f, 0f), step);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_1_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
         }
-        else if (moveToHandCard2)
+        else if (moveToHandCard2 && transform.position != new Vector3(HAND_CARD_2_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-0.85f, 3.5f, 0f), step);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_2_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
         }
-        else if (moveToHandCard3)
+        else if (moveToHandCard3 && transform.position != new Vector3(HAND_CARD_3_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(0.85f, 3.5f, 0f), step);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_3_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
         }
-        else if (moveToHandCard4)
+        else if (moveToHandCard4 && transform.position != new Vector3(HAND_CARD_4_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(2.55f, 3.5f, 0f), step);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_4_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+        }
+        else
+        {
+            moveToHandCard1 = false;
+            moveToHandCard2 = false;
+            moveToHandCard3 = false;
+            moveToHandCard4 = false;
         }
     }
 
-    // player left click
+    // player left click (DEBUGGING PURPOSES)
     void OnMouseDown()
     {
         gameObject.GetComponent<Card>().toggleCard();
@@ -156,7 +171,9 @@ public class AssetRenderer : MonoBehaviour {
         move = true;
     }
 
-    public void moveCard(Card card, HandCard hc)
+
+    // play animation that deals hand cards to the player
+    public void dealHandCard(Card card, HandCard hc)
     {
         if (hc.transform.name == "Hand Card 1")
         {

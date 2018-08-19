@@ -494,7 +494,7 @@ public class PlayerScript : NetworkBehaviour {
         hand[handInd].setCard(card);
 
         // animation to deal cards
-        card.GetComponent<AssetRenderer>().moveCard(card.GetComponent<Card>(), hand[handInd]);
+        card.GetComponent<AssetRenderer>().dealHandCard(card.GetComponent<Card>(), hand[handInd]);
         Debug.Log("RHEEEEEEEEEEE: " + hand[handInd].transform.name);
     }
 }
