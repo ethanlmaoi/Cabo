@@ -22,12 +22,6 @@ public class Discard : NetworkBehaviour {
         if(isServer) RpcAddCard(card);
     }
 
-    [Command]
-    public void CmdAddCard(GameObject card) //allows clients to tell other clients to discard a card
-    {
-        RpcAddCard(card);
-    }
-
     [ClientRpc]
     public void RpcAddCard(GameObject card) //add card to discard pile
     {
@@ -39,10 +33,9 @@ public class Discard : NetworkBehaviour {
         return discard.Peek();
     }
 
-    [Command]
-    public void CmdPopCard()
+    public void popCard()
     {
-        RpcPopCard();
+        if(isServer) RpcPopCard();
     }
 
     [ClientRpc]
@@ -50,16 +43,20 @@ public class Discard : NetworkBehaviour {
     {
         discard.Pop();
     }
-
-    [Command]
-    public void CmdShuffleIntoDeck(GameObject d) //shuffle discard cards back into deck
+    
+    public void shuffleIntoDeck(Deck deck) //shuffle discard cards back into deck
     {
-        Deck deck = d.GetComponent<Deck>();
+        if(!isServer)
+        {
+            Debug.Log("nonserver discard trying to shuffle into deck");
+            return;
+        }
         while(discard.Count > 0)
         {
-            deck.RpcAddCard(peekTop().gameObject);
+            deck.addToShuffleDeck(peekTop().gameObject);
             RpcPopCard();
         }
-        deck.shuffle(); //TODO shuffle only concerned with beginning of game, this not working yet
+        deck.shuffle(); //shouldn't need to check if done shuffling because this call is not asynchronous
+        deck.deckCards();
     }
 }

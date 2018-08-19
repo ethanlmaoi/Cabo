@@ -9,6 +9,7 @@ TagManager:
   - Card
   - HandCard
   - GameStarter
+  - Cambrio
   layers:
   - Default
   - TransparentFX
