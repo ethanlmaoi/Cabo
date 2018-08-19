@@ -17,7 +17,7 @@ public class AssetRenderer : MonoBehaviour {
     string fileName;
 
     bool move = false;
-    float speed = 35.0f;
+    float speed = 30.0f;
     Transform target;
 
     const float HAND_CARD_1_X_POS = -2.55f;

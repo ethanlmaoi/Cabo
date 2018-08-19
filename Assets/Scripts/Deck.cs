@@ -24,7 +24,6 @@ public class Deck : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
         deck = new Stack<Card>();
-
         shuffleDeck = new Stack<GameObject>();
         
         if(isServer)
