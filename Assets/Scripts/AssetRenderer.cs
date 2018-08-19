@@ -17,7 +17,7 @@ public class AssetRenderer : MonoBehaviour {
     string fileName;
 
     bool move = false;
-    float speed = 15.0f;
+    float speed = 35.0f;
     Transform target;
 
     const float HAND_CARD_1_X_POS = -2.55f;
@@ -129,26 +129,22 @@ public class AssetRenderer : MonoBehaviour {
             gameObject.GetComponent<Animator>().SetBool("flippedUp", false);
         }
 
-        // dealHandCard method
+        // dealHandCard method (WILL CREATE MORE EFFICIENT DEAL FUNCTION SO NOT REPTITIVE) <-- WORK IN PROGRESS
         if (moveToHandCard1 && transform.position != new Vector3(HAND_CARD_1_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
-            float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_1_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+            StartCoroutine(deal1());
         }
         else if (moveToHandCard2 && transform.position != new Vector3(HAND_CARD_2_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
-            float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_2_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+            StartCoroutine(deal2());
         }
         else if (moveToHandCard3 && transform.position != new Vector3(HAND_CARD_3_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
-            float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_3_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+            StartCoroutine(deal3());
         }
         else if (moveToHandCard4 && transform.position != new Vector3(HAND_CARD_4_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
         {
-            float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_4_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+            StartCoroutine(deal4());
         }
         else
         {
@@ -157,6 +153,35 @@ public class AssetRenderer : MonoBehaviour {
             moveToHandCard3 = false;
             moveToHandCard4 = false;
         }
+    }
+
+    // these are added delays to make the dealing of the cards more lifelike and smooth (so cards aren't being shotgunned into the hand cards) 
+    IEnumerator deal1()
+    {
+        yield return new WaitForSeconds(0.25f);
+        float step = speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_1_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+    }
+
+    IEnumerator deal2()
+    {
+        yield return new WaitForSeconds(0.5f);
+        float step = speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_2_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+    }
+
+    IEnumerator deal3()
+    {
+        yield return new WaitForSeconds(0.75f);
+        float step = speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_3_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
+    }
+
+    IEnumerator deal4()
+    {
+        yield return new WaitForSeconds(1.0f);
+        float step = speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_4_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
     }
 
     public void toggleCard()
@@ -184,6 +209,4 @@ public class AssetRenderer : MonoBehaviour {
             moveToHandCard4 = true;
         }
     }
-
-
 }
