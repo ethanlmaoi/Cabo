@@ -176,7 +176,7 @@ public class PlayerScript : NetworkBehaviour {
                 // ETHAN: added animation that flips the selected FIRST card
                 hc1 = hit.transform.GetComponent<HandCard>();
                 hc1.getCard().toggleCard();
-                Debug.Log("flipping first card: " + hc1.getCard().name);
+                Debug.Log("flipping first card: " + hc1.getCard().toString());
 
                 chosenCards++;
                 Debug.Log(chosenCards);
@@ -186,11 +186,11 @@ public class PlayerScript : NetworkBehaviour {
                 // ETHAN: added animation that flips the selected SECOND card
                 hc2 = hit.transform.GetComponent<HandCard>();
                 hc2.getCard().toggleCard();
-                Debug.Log("flipping second card: " + hc2.getCard().name);
+                Debug.Log("flipping second card: " + hc2.getCard().toString());
 
                 // ETHAN: added animation that flips back the selected two cards (after flipBack() delay)
                 StartCoroutine(flipBack());
-                Debug.Log("flipped back: " + hc1.getCard().name + " and " + hc2.getCard().name);
+                Debug.Log("flipped back: " + hc1.getCard().toString() + " and " + hc2.getCard().toString());
 
                 chosenCards = 0;
                 CmdUpdateMode(Modes.WAITING);
