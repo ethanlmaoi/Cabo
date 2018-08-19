@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class AssetRenderer : MonoBehaviour {
 
@@ -31,6 +32,8 @@ public class AssetRenderer : MonoBehaviour {
     bool moveToHandCard2;
     bool moveToHandCard3;
     bool moveToHandCard4;
+    bool cardDrawing;
+    bool discardingCard;
 
     void Start()
     {
@@ -112,6 +115,7 @@ public class AssetRenderer : MonoBehaviour {
         // load the sprite and the animator controller
         gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + fileName);
         gameObject.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Animations/" + fileName);
+        gameObject.GetComponent<NetworkAnimator>().animator = GetComponent<Animator>();
 
         // moveObject stuff
         target = GameObject.FindGameObjectWithTag("Deck").GetComponent<Transform>();
@@ -153,6 +157,54 @@ public class AssetRenderer : MonoBehaviour {
             moveToHandCard3 = false;
             moveToHandCard4 = false;
         }
+
+        if (cardDrawing)
+        {
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(0f, 0f, 0f), step);
+            transform.position = new Vector3(transform.position.x, transform.position.y, -3); // to make sure the card is lowest depth for clarity
+            StartCoroutine(scaleOverTime(0.8f));
+        }
+
+        if (discardingCard)
+        {
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-1.286f, -0.05f, 0f), step);
+            StartCoroutine(descaleOverTime(0.5f));
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        }
+    }
+
+    IEnumerator scaleOverTime(float time)
+    {
+        Vector3 originalScale = gameObject.transform.localScale;
+        Vector3 destinationScale = new Vector3(2f, 2f, 2f);
+
+        float currentTime = 0.0f;
+
+        do
+        {
+            gameObject.transform.localScale = Vector3.Lerp(originalScale, destinationScale, currentTime / time);
+            currentTime += Time.deltaTime;
+            yield return null;
+        } while (currentTime <= time);
+        cardDrawing = false;
+    }
+
+    IEnumerator descaleOverTime(float time)
+    {
+        Vector3 originalScale = gameObject.transform.localScale;
+        Vector3 destinationScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        float currentTime = 0.0f;
+
+        do
+        {
+            gameObject.transform.localScale = Vector3.Lerp(originalScale, destinationScale, currentTime / time);
+            currentTime += Time.deltaTime;
+            yield return null;
+        } while (currentTime <= time);
+        discardingCard = true;
     }
 
     // these are added delays to make the dealing of the cards more lifelike and smooth (so cards aren't being shotgunned into the hand cards) 
@@ -208,5 +260,16 @@ public class AssetRenderer : MonoBehaviour {
         {
             moveToHandCard4 = true;
         }
+    }
+
+    // play animation that reveals drawn card
+    public void drawCard()
+    {
+        cardDrawing = true;
+    }
+
+    public void discardCard()
+    {
+        discardingCard = true;
     }
 }

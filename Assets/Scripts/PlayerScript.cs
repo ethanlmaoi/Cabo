@@ -211,9 +211,13 @@ public class PlayerScript : NetworkBehaviour {
     {
         if (hit.transform.tag == "Deck")
         {
-            //play animation of drawing card
             activeCard = deck.peekTop();
             this.CmdPopDeck();
+
+            // ETHAN: added animation that draws card and flips it to reveal to player
+            activeCard.GetComponent<AssetRenderer>().drawCard();
+            activeCard.toggleCard();
+
             Debug.Log("drew " + activeCard.toString());
             CmdUpdateMode(Modes.TURN);
             Debug.Log("turn");
@@ -236,8 +240,11 @@ public class PlayerScript : NetworkBehaviour {
         if (hit.transform.tag == "Discard")
         {
             Debug.Log("discarded " + activeCard.toString());
-            //play animation moving card to discard pile
             this.CmdDiscardCard(activeCard.gameObject);
+
+            // ETHAN: added animation puts card into discard pile
+            activeCard.GetComponent<AssetRenderer>().discardCard();
+
             if (activeCard.getNum() == PEEK_SELF_7 || activeCard.getNum() == PEEK_SELF_8)
             {
                 CmdUpdateMode(Modes.PEEK);
