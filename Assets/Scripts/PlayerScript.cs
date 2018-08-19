@@ -162,6 +162,10 @@ public class PlayerScript : NetworkBehaviour {
         }
 	}
 
+    // ETHAN: added these variables to keep track of the GameObject cards we flipped/highlighted in exeBegin(RaycastHit) method
+    private HandCard hc1;
+    private HandCard hc2;
+
     void exeBegin(RaycastHit hit)
     {
         if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getOwner() == this
@@ -169,19 +173,38 @@ public class PlayerScript : NetworkBehaviour {
         {
             if (chosenCards == 0)
             {
-                //reveal card
+                // ETHAN: added animation that flips the selected FIRST card
+                hc1 = hit.transform.GetComponent<HandCard>();
+                hc1.getCard().toggleCard();
+                Debug.Log("flipping first card: " + hc1.getCard().name);
+
                 chosenCards++;
                 Debug.Log(chosenCards);
             }
             else if (chosenCards == 1)
             {
-                //reveal card
+                // ETHAN: added animation that flips the selected SECOND card
+                hc2 = hit.transform.GetComponent<HandCard>();
+                hc2.getCard().toggleCard();
+                Debug.Log("flipping second card: " + hc2.getCard().name);
+
+                // ETHAN: added animation that flips back the selected two cards (after flipBack() delay)
+                StartCoroutine(flipBack());
+                Debug.Log("flipped back: " + hc1.getCard().name + " and " + hc2.getCard().name);
+
                 chosenCards = 0;
                 CmdUpdateMode(Modes.WAITING);
                 Debug.Log("waiting");
-                //unhighlight own cards
             }
         }
+    }
+
+    // ETHAN: function that helps flip back the selected two cards with a delay
+    IEnumerator flipBack()
+    {
+        yield return new WaitForSeconds(3);
+        hc1.getCard().toggleCard();
+        hc2.getCard().toggleCard();
     }
 
     void exeDraw(RaycastHit hit)
@@ -493,8 +516,7 @@ public class PlayerScript : NetworkBehaviour {
         Card card = deck.drawCard();
         hand[handInd].setCard(card);
 
-        // animation to deal cards
+        // ETHAN: plays animation to deal cards to each of the hand card positions
         card.GetComponent<AssetRenderer>().dealHandCard(card.GetComponent<Card>(), hand[handInd]);
-        Debug.Log("RHEEEEEEEEEEE: " + hand[handInd].transform.name);
     }
 }

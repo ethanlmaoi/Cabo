@@ -17,14 +17,14 @@ public class AssetRenderer : MonoBehaviour {
     string fileName;
 
     bool move = false;
-    float speed = 10.0f;
+    float speed = 15.0f;
     Transform target;
 
     const float HAND_CARD_1_X_POS = -2.55f;
     const float HAND_CARD_2_X_POS = -0.85f;
     const float HAND_CARD_3_X_POS = 0.85f;
     const float HAND_CARD_4_X_POS = 2.55f;
-    const float HAND_CARD_Y_POS = 3.5f;
+    const float HAND_CARD_Y_POS = -3.5f;
     const float DEFAULT_Z_POS = 0.0f;
 
     bool moveToHandCard1;
@@ -159,18 +159,10 @@ public class AssetRenderer : MonoBehaviour {
         }
     }
 
-    // player left click (DEBUGGING PURPOSES)
-    void OnMouseDown()
+    public void toggleCard()
     {
         gameObject.GetComponent<Card>().toggleCard();
-        moveCard();
     }
-
-    void moveCard()
-    {
-        move = true;
-    }
-
 
     // play animation that deals hand cards to the player
     public void dealHandCard(Card card, HandCard hc)
