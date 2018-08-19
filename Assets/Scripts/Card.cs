@@ -15,8 +15,9 @@ public class Card : NetworkBehaviour {
     int num;
     [SyncVar]
     Suit suit;
-
-	public void setNum(int n)
+    bool isFlipped;
+    
+    public void setNum(int n)
     {
         num = n;
     }
@@ -46,6 +47,16 @@ public class Card : NetworkBehaviour {
         {
             return num; //otherwise, normal value
         }
+    }
+
+    public bool checkFlipped() // true if flipped up, false if flipped down
+    {
+        return isFlipped;
+    }
+
+    public void toggleCard() // flips up if down, flips down if up
+    {
+        isFlipped = !isFlipped;
     }
 
     public string toString()
