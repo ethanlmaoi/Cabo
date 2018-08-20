@@ -9,8 +9,11 @@ public class Discard : NetworkBehaviour {
 
     Stack<Card> discard;
 
-	// Use this for initialization
-	void Start () {
+    public GameObject highlightPrefab;
+    GameObject highlight;
+
+    // Use this for initialization
+    void Start () {
         discard = new Stack<Card>();
 	}
 	
@@ -61,5 +64,16 @@ public class Discard : NetworkBehaviour {
         }
         deck.shuffle(); //shouldn't need to check if done shuffling because this call is not asynchronous
         deck.deckCards();
+    }
+
+    public void highlightDiscard()
+    {
+        if (highlight != null) Destroy(highlight);
+        highlight = Instantiate(highlightPrefab, this.transform.position, this.transform.rotation);
+    }
+
+    public void unhighlightDiscard()
+    {
+        if(highlight != null) Destroy(highlight);
     }
 }

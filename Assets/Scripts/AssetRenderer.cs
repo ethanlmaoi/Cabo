@@ -147,6 +147,11 @@ public class AssetRenderer : MonoBehaviour {
             StartCoroutine(descaleOverTime(0.5f));
             transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         }
+
+        if(highlight != null && highlight.transform.position != this.transform.position)
+        {
+            highlight.transform.position = this.transform.position;
+        }
     }
 
     IEnumerator scaleOverTime(float time)
@@ -183,12 +188,13 @@ public class AssetRenderer : MonoBehaviour {
 
     public void highlightCard()
     {
+        if (highlight != null) Destroy(highlight);
         highlight = Instantiate(highlightPrefab, transform.position, this.transform.rotation);
     }
 
     public void removeHighlightCard()
     {
-        GameObject.Destroy(highlight);
+        if(highlight != null) GameObject.Destroy(highlight);
     }
 
     public void toggleCard()
