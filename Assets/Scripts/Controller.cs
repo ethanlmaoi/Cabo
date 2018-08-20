@@ -127,9 +127,43 @@ public class Controller : NetworkBehaviour {
         else
         {
             Debug.Log("setting " + players[currPlayerInd].getName() + " to start turn");
-            players[currPlayerInd].startTurn();
+            players[currPlayerInd].RpcStartTurn();
         }
         
+    }
+
+    public void highlightOtherPlayerCards()
+    {
+        int pInd = (currPlayerInd + 1) % numPlayers;
+        while(pInd != currPlayerInd)
+        {
+            players[pInd].highlightHand();
+        }
+    }
+
+    public void highlightAllPlayerCards()
+    {
+        for(int i = 0; i < numPlayers; i++)
+        {
+            players[i].highlightHand();
+        }
+    }
+
+    public void unhighlightOtherPlayerCards()
+    {
+        int pInd = (currPlayerInd + 1) % numPlayers;
+        while (pInd != currPlayerInd)
+        {
+            players[pInd].unhighlightHand();
+        }
+    }
+
+    public void unhighlightAllPlayerCards()
+    {
+        for (int i = 0; i < numPlayers; i++)
+        {
+            players[i].unhighlightHand();
+        }
     }
 
     public bool cambrioIsCalled()

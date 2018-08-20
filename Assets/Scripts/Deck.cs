@@ -19,6 +19,9 @@ public class Deck : NetworkBehaviour {
     Stack<GameObject> shuffleDeck; //shuffling looks bad onscreen so do it offscreen
     Vector3 offscreenPosition;
 
+    public GameObject highlightPrefab;
+    GameObject highlight;
+
     [SyncVar]
     bool doneShuffling;
     [SyncVar]
@@ -69,7 +72,11 @@ public class Deck : NetworkBehaviour {
            //     card.GetComponent<Card>().setSuit(Card.Suit.SPADES);
            //     NetworkServer.Spawn(card);
            //     shuffleDeck.Push(card);
+<<<<<<< HEAD
            // }
+=======
+            //}
+>>>>>>> 738ab0a2359b1eb20659c024cf534897939fd434
 
             shuffle();
             GameObject.FindGameObjectWithTag("GameStarter").GetComponentInChildren<TextMesh>().text = "Start Game";
@@ -188,5 +195,16 @@ public class Deck : NetworkBehaviour {
     public void RpcMoveToShuffleDeck(GameObject card)
     {
         card.GetComponent<Card>().setMoveTarget(offscreenPosition);
+    }
+
+    public void highlightDeck()
+    {
+        if (highlight != null) Destroy(highlight);
+        highlight = Instantiate(highlightPrefab, this.transform.position, this.transform.rotation);
+    }
+
+    public void unhighlightDeck()
+    {
+        if(highlight != null) Destroy(highlight);
     }
 }
