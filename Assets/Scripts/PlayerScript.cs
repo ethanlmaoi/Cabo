@@ -248,15 +248,11 @@ public class PlayerScript : NetworkBehaviour {
             if (activeCard.getNum() == PEEK_SELF_7 || activeCard.getNum() == PEEK_SELF_8)
             {
                 CmdUpdateMode(Modes.PEEK);
-
-                // highlight own cards to peek
-                for (int i = 0; i < hand.Length; i++)
-                {
-                    hand[i].getCard().highlightCard();
-                }
-
                 Debug.Log("peek self");
                 peekingSelf = true;
+                // ETHAN: animation highlight own cards to peek
+                highlightHandCards();
+
             }
             else if (activeCard.getNum() == PEEK_OTHER_9 || activeCard.getNum() == PEEK_OTHER_10)
             {

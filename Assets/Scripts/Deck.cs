@@ -69,7 +69,7 @@ public class Deck : NetworkBehaviour {
            //     card.GetComponent<Card>().setSuit(Card.Suit.SPADES);
            //     NetworkServer.Spawn(card);
            //     shuffleDeck.Push(card);
-            }
+           // }
 
             shuffle();
             GameObject.FindGameObjectWithTag("GameStarter").GetComponentInChildren<TextMesh>().text = "Start Game";
