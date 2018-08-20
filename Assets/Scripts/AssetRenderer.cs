@@ -28,12 +28,11 @@ public class AssetRenderer : MonoBehaviour {
     const float HAND_CARD_Y_POS = -3.5f;
     const float DEFAULT_Z_POS = 0.0f;
 
-    bool moveToHandCard1;
-    bool moveToHandCard2;
-    bool moveToHandCard3;
-    bool moveToHandCard4;
     bool cardDrawing;
     bool discardingCard;
+
+    [SerializeField] GameObject highlightPrefab;
+    GameObject highlight;
 
     void Start()
     {
@@ -180,6 +179,16 @@ public class AssetRenderer : MonoBehaviour {
             yield return null;
         } while (currentTime <= time);
         discardingCard = true;
+    }
+
+    public void highlightCard()
+    {
+        highlight = Instantiate(highlightPrefab, transform.position, this.transform.rotation);
+    }
+
+    public void removeHighlightCard()
+    {
+        GameObject.Destroy(highlight);
     }
 
     public void toggleCard()

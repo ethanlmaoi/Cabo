@@ -81,6 +81,16 @@ public class Card : NetworkBehaviour {
         isFlipped = !isFlipped;
     }
 
+    public void highlightCard()
+    {
+        gameObject.GetComponent<AssetRenderer>().highlightCard();
+    }
+
+    public void removeHighlightCard()
+    {
+        gameObject.GetComponent<AssetRenderer>().removeHighlightCard();
+    }
+
     public string toString()
     {
         return num + " of " + suit;
