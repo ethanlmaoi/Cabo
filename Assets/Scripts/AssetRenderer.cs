@@ -135,7 +135,7 @@ public class AssetRenderer : MonoBehaviour {
         if (cardDrawing)
         {
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(0f, 0f, 0f), step);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(5.2f, 0f, 0f), step);
             transform.position = new Vector3(transform.position.x, transform.position.y, -3); // to make sure the card is lowest depth for clarity
             StartCoroutine(scaleOverTime(0.8f));
         }
