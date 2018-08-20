@@ -560,8 +560,5 @@ public class PlayerScript : NetworkBehaviour {
         Card card = deck.drawCard();
         hand[handInd].setCard(card);
         card.setMoveTarget(hand[handInd].transform.position);
-
-        // ETHAN: plays animation to deal cards to each of the hand card positions
-        card.GetComponent<AssetRenderer>().dealHandCard(card.GetComponent<Card>(), hand[handInd]);
     }
 }

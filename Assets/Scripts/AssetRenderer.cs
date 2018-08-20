@@ -115,7 +115,7 @@ public class AssetRenderer : MonoBehaviour {
         // load the sprite and the animator controller
         gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + fileName);
         gameObject.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Animations/" + fileName);
-        gameObject.GetComponent<NetworkAnimator>().animator = GetComponent<Animator>();
+        // gameObject.GetComponent<NetworkAnimator>().animator = GetComponent<Animator>();
 
         // moveObject stuff
         target = GameObject.FindGameObjectWithTag("Deck").GetComponent<Transform>();
@@ -131,31 +131,6 @@ public class AssetRenderer : MonoBehaviour {
         else // flips card down if false
         {
             gameObject.GetComponent<Animator>().SetBool("flippedUp", false);
-        }
-
-        // dealHandCard method (WILL CREATE MORE EFFICIENT DEAL FUNCTION SO NOT REPTITIVE) <-- WORK IN PROGRESS
-        if (moveToHandCard1 && transform.position != new Vector3(HAND_CARD_1_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
-        {
-            StartCoroutine(deal1());
-        }
-        else if (moveToHandCard2 && transform.position != new Vector3(HAND_CARD_2_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
-        {
-            StartCoroutine(deal2());
-        }
-        else if (moveToHandCard3 && transform.position != new Vector3(HAND_CARD_3_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
-        {
-            StartCoroutine(deal3());
-        }
-        else if (moveToHandCard4 && transform.position != new Vector3(HAND_CARD_4_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS))
-        {
-            StartCoroutine(deal4());
-        }
-        else
-        {
-            moveToHandCard1 = false;
-            moveToHandCard2 = false;
-            moveToHandCard3 = false;
-            moveToHandCard4 = false;
         }
 
         if (cardDrawing)
@@ -207,59 +182,9 @@ public class AssetRenderer : MonoBehaviour {
         discardingCard = true;
     }
 
-    // these are added delays to make the dealing of the cards more lifelike and smooth (so cards aren't being shotgunned into the hand cards) 
-    IEnumerator deal1()
-    {
-        yield return new WaitForSeconds(0.25f);
-        float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_1_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
-    }
-
-    IEnumerator deal2()
-    {
-        yield return new WaitForSeconds(0.5f);
-        float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_2_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
-    }
-
-    IEnumerator deal3()
-    {
-        yield return new WaitForSeconds(0.75f);
-        float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_3_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
-    }
-
-    IEnumerator deal4()
-    {
-        yield return new WaitForSeconds(1.0f);
-        float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(HAND_CARD_4_X_POS, HAND_CARD_Y_POS, DEFAULT_Z_POS), step);
-    }
-
     public void toggleCard()
     {
         gameObject.GetComponent<Card>().toggleCard();
-    }
-
-    // play animation that deals hand cards to the player
-    public void dealHandCard(Card card, HandCard hc)
-    {
-        if (hc.transform.name == "Hand Card 1")
-        {
-            moveToHandCard1 = true;
-        }
-        else if (hc.transform.name == "Hand Card 2")
-        {
-            moveToHandCard2 = true;
-        }
-        else if (hc.transform.name == "Hand Card 3")
-        {
-            moveToHandCard3 = true;
-        }
-        else if (hc.transform.name == "Hand Card 4")
-        {
-            moveToHandCard4 = true;
-        }
     }
 
     // play animation that reveals drawn card
