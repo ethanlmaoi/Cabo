@@ -8,6 +8,7 @@ public class Controller : NetworkBehaviour {
     const int MAX_PLAYERS = 2;
     const int STARTING_HAND_SIZE = 4;
     const int MAX_HAND_VALUE = 74; //two black kings and four queens
+    const float MOVE_DELAY = 0.05f;
     
     PlayerScript[] players;
 
@@ -46,7 +47,7 @@ public class Controller : NetworkBehaviour {
         {
             return;
         }
-        if (decking && deck.isReady())
+        if (decking && deck.isReady() && deck.peekTop().transform.position.x == deck.transform.position.x)
         {
             CmdStartGame();
         }
@@ -87,18 +88,23 @@ public class Controller : NetworkBehaviour {
     public void CmdStartGame()
     {
         decking = false;
+        StartCoroutine(dealCards());
+        beginning = true;
+    }
 
+    IEnumerator dealCards()
+    {
         foreach (PlayerScript player in players)
         {
             if (player == null) continue;
             for (int i = 0; i < STARTING_HAND_SIZE; i++)
             {
                 player.RpcDealCard(i);
-                //TODO animate moving card from deck to moveDest
+                yield return new WaitForSeconds(MOVE_DELAY); //adds a delay between each card being dealt
             }
             player.RpcBegin();
         }
-        beginning = true;
+        
     }
 
     public void nextPlayerTurn()
@@ -110,7 +116,7 @@ public class Controller : NetworkBehaviour {
         }
         if (deck.size() == 0)
         {
-            Debug.Log("shufflign discard into deck");
+            Debug.Log("shuffling discard into deck");
             discard.shuffleIntoDeck(deck);
         }
         currPlayerInd = (currPlayerInd + 1) % numPlayers;

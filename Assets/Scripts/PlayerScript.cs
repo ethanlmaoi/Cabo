@@ -127,7 +127,7 @@ public class PlayerScript : NetworkBehaviour {
                     {
                         hit.transform.GetComponentInChildren<TextMesh>().text = "Shuffling";
                         //shuffling is already done, just need to transfer cards from shuffle deck to normal deck
-                        deck.deckCards();
+                        StartCoroutine(deck.deckCards());
                     }
                     Debug.Log(this.getName() + " hit " + hit.transform + " while in " + mode);
                     switch (mode)
@@ -546,6 +546,7 @@ public class PlayerScript : NetworkBehaviour {
         if (card != null)
         {
             hand[handInd].setCard(card.GetComponent<Card>());
+            card.GetComponent<Card>().setMoveTarget(hand[handInd].transform.position);
         }
         else
         {
@@ -558,6 +559,7 @@ public class PlayerScript : NetworkBehaviour {
     {
         Card card = deck.drawCard();
         hand[handInd].setCard(card);
+        card.setMoveTarget(hand[handInd].transform.position);
 
         // ETHAN: plays animation to deal cards to each of the hand card positions
         card.GetComponent<AssetRenderer>().dealHandCard(card.GetComponent<Card>(), hand[handInd]);
