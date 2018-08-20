@@ -15,7 +15,7 @@ public class Controller : NetworkBehaviour {
     [SyncVar]
     int numPlayers = 0;
     [SyncVar]
-    int currPlayerInd = 0;
+    int currPlayerInd = -1;
 
     public GameObject deckObj;
     Deck deck;
