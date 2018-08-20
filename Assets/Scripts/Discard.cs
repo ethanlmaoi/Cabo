@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class Discard : NetworkBehaviour {
 
+    const float CARD_HEIGHT_DIFF = -0.1f;
+
     Stack<Card> discard;
 
 	// Use this for initialization
@@ -26,6 +28,7 @@ public class Discard : NetworkBehaviour {
     public void RpcAddCard(GameObject card) //add card to discard pile
     {
         discard.Push(card.GetComponent<Card>());
+        card.GetComponent<Card>().setMoveTarget(this.transform.position + new Vector3(0, 0, discard.Count * CARD_HEIGHT_DIFF));
     }
 
     public Card peekTop() //check top card in case of doubles

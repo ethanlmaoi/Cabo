@@ -16,7 +16,29 @@ public class Card : NetworkBehaviour {
     [SyncVar]
     Suit suit;
     bool isFlipped;
-    
+
+    Vector3 moveTarget;
+    float moveSpeed = 20f;
+
+    private void Start()
+    {
+        moveTarget = Vector3.zero;
+    }
+
+    private void FixedUpdate()
+    {
+        if(moveTarget != Vector3.zero)
+        {
+            this.transform.position = Vector3.MoveTowards(this.transform.position, moveTarget, moveSpeed * Time.deltaTime);
+            if (this.transform.position == moveTarget) moveTarget = Vector3.zero;
+        }
+    }
+
+    public void setMoveTarget(Vector3 target)
+    {
+        moveTarget = target;
+    }
+
     public void setNum(int n)
     {
         num = n;

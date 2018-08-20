@@ -8,13 +8,16 @@ public class Deck : NetworkBehaviour {
     const int ACE = 1;
     const int KING = 13;
     const int NUM_QUEUES = 5;
-    const int OFFSCREEN_OFFSET = 30;
+    const int OFFSCREEN_OFFSET = 20;
     const int TIMES_TO_SHUFFLE = 3;
+    const float CARD_HEIGHT_DIFF = -0.1f;
+    const float MOVE_DELAY = 0.05f;
     
     Stack<Card> deck;
     public GameObject cardPrefab;
 
     Stack<GameObject> shuffleDeck; //shuffling looks bad onscreen so do it offscreen
+    Vector3 offscreenPosition;
 
     [SyncVar]
     bool doneShuffling;
@@ -26,35 +29,32 @@ public class Deck : NetworkBehaviour {
         deck = new Stack<Card>();
 
         shuffleDeck = new Stack<GameObject>();
-        
-        if(isServer)
+        offscreenPosition = this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0);
+
+        if (isServer)
         {
             deckIsReady = false;
             for (int i = ACE; i <= KING; i++) //create cards and put them in the deck
             {
-                GameObject card = (GameObject)Instantiate(cardPrefab,
-                    this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
+                GameObject card = (GameObject)Instantiate(cardPrefab, offscreenPosition, this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.DIAMONDS);
                 NetworkServer.Spawn(card);
                 shuffleDeck.Push(card);
 
-                card = (GameObject)Instantiate(cardPrefab,
-                    this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
+                card = (GameObject)Instantiate(cardPrefab, offscreenPosition, this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.CLUBS);
                 NetworkServer.Spawn(card);
                 shuffleDeck.Push(card);
 
-                card = (GameObject)Instantiate(cardPrefab,
-                    this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
+                card = (GameObject)Instantiate(cardPrefab, offscreenPosition, this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.HEARTS);
                 NetworkServer.Spawn(card);
                 shuffleDeck.Push(card);
 
-                card = (GameObject)Instantiate(cardPrefab,
-                    this.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0), this.transform.rotation);
+                card = (GameObject)Instantiate(cardPrefab, offscreenPosition, this.transform.rotation);
                 card.GetComponent<Card>().setNum(i);
                 card.GetComponent<Card>().setSuit(Card.Suit.SPADES);
                 NetworkServer.Spawn(card);
@@ -76,24 +76,24 @@ public class Deck : NetworkBehaviour {
         return deckIsReady;
     }
     
-    public void deckCards()
+    public IEnumerator deckCards()
     {
         if(!isServer)
         {
-            return;
+            yield break;
         }
         while(shuffleDeck.Count > 0)
         {
             RpcAddCard(shuffleDeck.Pop());
+            yield return new WaitForSeconds(MOVE_DELAY); //adds a delay between each card being decked
         }
     }
 
     [ClientRpc]
     public void RpcAddCard(GameObject card) //add a card to the deck
     {
-        //Debug.Log("pushing " + card.GetComponent<Card>().toString() + " to the deck");
         deck.Push(card.GetComponent<Card>());
-        card.transform.position = this.transform.position; //TODO remove after frontend and backend combined
+        card.GetComponent<Card>().setMoveTarget(this.transform.position + new Vector3(0, 0, deck.Count * CARD_HEIGHT_DIFF));
         if(isServer && shuffleDeck.Count == 0)
         {
             deckIsReady = true;
@@ -168,8 +168,15 @@ public class Deck : NetworkBehaviour {
         doneShuffling = true;
     }
 
-    public void addToShuffleDeck(GameObject c)
+    public void addToShuffleDeck(GameObject card)
     {
-        shuffleDeck.Push(c);
+        shuffleDeck.Push(card);
+        RpcMoveToShuffleDeck(card);
+    }
+
+    [ClientRpc]
+    public void RpcMoveToShuffleDeck(GameObject card)
+    {
+        card.GetComponent<Card>().setMoveTarget(offscreenPosition);
     }
 }
