@@ -593,6 +593,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 1733271534344688, guid: 2e4a3c504104aee4a8b0ada7a4d25ffe, type: 2}
+  highlightPrefab: {fileID: 1992234206603086, guid: 4215c0b67683b6d43bedb1b30dfd68e8,
+    type: 2}
 --- !u!4 &1482160520
 Transform:
   m_ObjectHideFlags: 0
@@ -1150,6 +1152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 465f21280b3bedc4c9fc8aeebf413b69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlightPrefab: {fileID: 1992234206603086, guid: 4215c0b67683b6d43bedb1b30dfd68e8,
+    type: 2}
 --- !u!4 &2118605183
 Transform:
   m_ObjectHideFlags: 0

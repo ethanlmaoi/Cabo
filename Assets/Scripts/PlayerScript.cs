@@ -24,6 +24,10 @@ public class PlayerScript : NetworkBehaviour {
     HandCard swapSpot1; //first handcard involved in swapping
     HandCard swapSpot2; //second handcard involved in swapping
 
+    // ETHAN: added these variables to keep track of the GameObject cards we flipped/highlighted in exeBegin(RaycastHit) method
+    private HandCard hc1;
+    private HandCard hc2;
+
     HandCard doubleSpot;
     Modes oldMode; //mode player was in before tapping discard pile to double
 
@@ -162,10 +166,6 @@ public class PlayerScript : NetworkBehaviour {
         }
 	}
 
-    // ETHAN: added these variables to keep track of the GameObject cards we flipped/highlighted in exeBegin(RaycastHit) method
-    private HandCard hc1;
-    private HandCard hc2;
-
     void exeBegin(RaycastHit hit)
     {
         if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getOwner() == this
@@ -204,8 +204,11 @@ public class PlayerScript : NetworkBehaviour {
     IEnumerator flipBack()
     {
         yield return new WaitForSeconds(3);
-        hc1.getCard().toggleCard();
-        hc2.getCard().toggleCard();
+        if (hc1 != null && hc1.getCard() != null) hc1.getCard().toggleCard();
+        if (hc2 != null && hc2.getCard() != null) hc2.getCard().toggleCard();
+
+        hc1 = null;
+        hc2 = null;
     }
 
     void exeDraw(RaycastHit hit)
@@ -317,9 +320,9 @@ public class PlayerScript : NetworkBehaviour {
             if ((peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() == this) ||
                 (!peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() != this))
             {
-                Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
-                Debug.Log("peeked at " + peekCard.toString());
-                //TODO play animation of revealing card
+                hc1 = hit.transform.GetComponent<HandCard>();
+                hc1.getCard().toggleCard();
+                StartCoroutine(flipBack());
                 this.CmdFinishTurn();
                 if (peekingSelf) this.unhighlightHand();
                 else control.unhighlightOtherPlayerCards();
@@ -411,7 +414,6 @@ public class PlayerScript : NetworkBehaviour {
                 this.CmdDiscardCard(doubleCard.gameObject);
                 int handInd = doubleSpot.getOwner().findHandCard(doubleSpot);
                 doubleSpot.getOwner().CmdSetCard(handInd, null); //remove card from handcard
-                                          //TODO play animation for moving card from handcard to discard
                 if (doubleSpot.getOwner() != this)
                 {
                     CmdUpdateMode(Modes.REPLACING);
