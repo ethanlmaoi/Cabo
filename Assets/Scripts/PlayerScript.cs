@@ -328,7 +328,7 @@ public class PlayerScript : NetworkBehaviour {
             if ((peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() == this) ||
                 (!peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() != this))
             {
-<<<<<<< HEAD
+
                 Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
                 Debug.Log("peeked at " + peekCard.toString());
 
@@ -336,11 +336,10 @@ public class PlayerScript : NetworkBehaviour {
                 peekCard.toggleCard();
                 flipBack(peekCard); // after 3 seconds flip back
 
-=======
                 hc1 = hit.transform.GetComponent<HandCard>();
                 hc1.getCard().flipUp();
                 StartCoroutine(flipBack());
->>>>>>> 6e61d786db3e1842fba0d918c8cb0fad8a96ab11
+
                 this.CmdFinishTurn();
                 if (peekingSelf) this.unhighlightHand();
                 else control.unhighlightOtherPlayerCards();
