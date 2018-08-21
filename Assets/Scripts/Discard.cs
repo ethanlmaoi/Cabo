@@ -32,6 +32,7 @@ public class Discard : NetworkBehaviour {
     {
         discard.Push(card.GetComponent<Card>());
         card.GetComponent<Card>().setMoveTarget(this.transform.position + new Vector3(0, 0, discard.Count * CARD_HEIGHT_DIFF));
+        card.GetComponent<Card>().flipUp();
     }
 
     public Card peekTop() //check top card in case of doubles

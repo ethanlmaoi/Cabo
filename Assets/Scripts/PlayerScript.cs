@@ -20,6 +20,7 @@ public class PlayerScript : NetworkBehaviour {
 
     HandCard[] hand;
     Card activeCard;
+    Vector3 activeCardPos;
 
     HandCard swapSpot1; //first handcard involved in swapping
     HandCard swapSpot2; //second handcard involved in swapping
@@ -60,6 +61,7 @@ public class PlayerScript : NetworkBehaviour {
         control = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
         deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<Deck>();
         discard = GameObject.FindGameObjectWithTag("Discard").GetComponent<Discard>();
+        activeCardPos = new Vector3(6, 0, 0);
 
         hand = new HandCard[HAND_MAX];
         HandCard[] hcScripts = GetComponentsInChildren<HandCard>();
@@ -204,8 +206,8 @@ public class PlayerScript : NetworkBehaviour {
     IEnumerator flipBack()
     {
         yield return new WaitForSeconds(3);
-        if (hc1 != null && hc1.getCard() != null) hc1.getCard().toggleCard();
-        if (hc2 != null && hc2.getCard() != null) hc2.getCard().toggleCard();
+        if (hc1 != null && hc1.getCard() != null) hc1.getCard().flipDown(); //guarantees it always flip down and not up
+        if (hc2 != null && hc2.getCard() != null) hc2.getCard().flipDown();
 
         hc1 = null;
         hc2 = null;
@@ -216,6 +218,7 @@ public class PlayerScript : NetworkBehaviour {
         if (hit.transform.tag == "Deck")
         {
             activeCard = deck.peekTop();
+            this.CmdMoveToActiveCard(activeCard.gameObject);
             this.CmdPopDeck();
 
             // ETHAN: added animation that draws card and flips it to reveal to player
@@ -302,8 +305,7 @@ public class PlayerScript : NetworkBehaviour {
 
             int handInd = this.findHandCard(hit.transform.GetComponent<HandCard>());
             this.CmdSetCard(handInd, activeCard.gameObject);
-
-            activeCard.toggleCard(); // NEEDS FIX: OLD CARD IS LOOKING FACE DOWN FOR ONE PERSON AND FACE UP FOR THE OTHER PERSON
+            activeCard.flipDown();
 
             this.CmdDiscardCard(oldCard.gameObject);
             this.CmdFinishTurn();
@@ -321,7 +323,7 @@ public class PlayerScript : NetworkBehaviour {
                 (!peekingSelf && hit.transform.GetComponent<HandCard>().getOwner() != this))
             {
                 hc1 = hit.transform.GetComponent<HandCard>();
-                hc1.getCard().toggleCard();
+                hc1.getCard().flipUp();
                 StartCoroutine(flipBack());
                 this.CmdFinishTurn();
                 if (peekingSelf) this.unhighlightHand();
@@ -428,6 +430,9 @@ public class PlayerScript : NetworkBehaviour {
             }
             else //double incorrect, add top of discard to player's empty spot
             {
+                hc1 = doubleSpot;
+                doubleCard.flipUp();
+                StartCoroutine(flipBack());
                 int moveDestInd = FindEmptyHandCard();
                 if (moveDestInd == -1)
                 {
@@ -435,10 +440,9 @@ public class PlayerScript : NetworkBehaviour {
                 }
                 else
                 {
+                    discard.peekTop().flipDown();
                     this.CmdSetCard(moveDestInd, discard.peekTop().gameObject);
                     this.CmdPopDiscard();
-                    Debug.Log("moving to hand card " + moveDestInd);
-                    //play animation of moving card from discard to moveDest
                     CmdUpdateMode(oldMode);
                     revertHighlight();
                 }
@@ -508,6 +512,18 @@ public class PlayerScript : NetworkBehaviour {
     public void CmdPopDeck()
     {
         deck.popCard();
+    }
+
+    [Command]
+    public void CmdMoveToActiveCard(GameObject card)
+    {
+        RpcMoveToActiveCard(card);
+    }
+
+    [ClientRpc]
+    public void RpcMoveToActiveCard(GameObject card)
+    {
+        card.GetComponent<Card>().setMoveTarget(activeCardPos);
     }
 
     [Command]

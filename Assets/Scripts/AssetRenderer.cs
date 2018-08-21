@@ -135,18 +135,15 @@ public class AssetRenderer : MonoBehaviour {
 
         if (cardDrawing)
         {
-            float step = speed * Time.deltaTime;
             StartCoroutine(scaleOverTime(0.8f));
         }
 
         if (discardingCard)
         {
-            float step = speed * Time.deltaTime;
             StartCoroutine(discardDescaleOverTime(0.5f));
         }
         if (replacingCard)
         {
-            float step = speed * Time.deltaTime;
             StartCoroutine(replaceDescaleOverTime(0.5f));
         }
 
