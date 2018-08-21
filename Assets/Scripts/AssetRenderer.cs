@@ -135,24 +135,16 @@ public class AssetRenderer : MonoBehaviour {
 
         if (cardDrawing)
         {
-            float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(5.2f, 0f, 0f), step);
-            transform.position = new Vector3(transform.position.x, transform.position.y, -3); // to make sure the card is lowest depth for clarity
             StartCoroutine(scaleOverTime(0.8f));
         }
 
         if (discardingCard)
         {
-            float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-1.286f, -0.05f, 0f), step);
             StartCoroutine(discardDescaleOverTime(0.5f));
-            transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         }
         if (replacingCard)
         {
-            float step = speed * Time.deltaTime;
             StartCoroutine(replaceDescaleOverTime(0.5f));
-            transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         }
 
         if(highlight != null && highlight.transform.position != this.transform.position)
@@ -190,7 +182,6 @@ public class AssetRenderer : MonoBehaviour {
             currentTime += Time.deltaTime;
             yield return null;
         } while (currentTime <= time);
-        discardingCard = true;
     }
 
     IEnumerator replaceDescaleOverTime(float time)

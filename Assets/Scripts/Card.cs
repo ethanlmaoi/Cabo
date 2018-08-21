@@ -80,6 +80,16 @@ public class Card : NetworkBehaviour {
     {
         isFlipped = !isFlipped;
     }
+    
+    public void flipUp() //flips card up for discard or peeking or knowledgeable swapping
+    {
+        isFlipped = true;
+    }
+
+    public void flipDown() //flips card facedown after peeking or moving
+    {
+        isFlipped = false;
+    }
 
     public void highlightCard()
     {

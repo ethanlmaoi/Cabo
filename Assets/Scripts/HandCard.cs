@@ -23,7 +23,6 @@ public class HandCard : MonoBehaviour {
     
     public void setCard(Card c)
     {
-        Debug.Log(owner.getName() + ": " + this + " set card to " + c.toString());
         card = c;
     }
 }
