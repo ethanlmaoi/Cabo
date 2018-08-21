@@ -331,7 +331,6 @@ public class PlayerScript : NetworkBehaviour {
                 hc1 = hit.transform.GetComponent<HandCard>();
                 hc1.getCard().flipUp();
                 StartCoroutine(flipBack());
-
                 this.CmdFinishTurn();
                 if (peekingSelf) this.unhighlightHand();
                 else control.unhighlightPlayerCardsExcept(this);
