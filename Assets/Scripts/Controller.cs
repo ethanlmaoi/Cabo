@@ -7,7 +7,7 @@ public class Controller : NetworkBehaviour {
 
     const int MAX_PLAYERS = 2;
     const int STARTING_HAND_SIZE = 4;
-    const int MAX_HAND_VALUE = 74; //two black kings and four queens
+    const int MAX_HAND_VALUE = 75; //two black kings and four queens + 1
     const float MOVE_DELAY = 0.05f;
     
     PlayerScript[] players;
@@ -26,6 +26,8 @@ public class Controller : NetworkBehaviour {
     bool decking;
     [SyncVar]
     bool beginning;
+    [SyncVar]
+    bool cambrioing; //waiting for last cards to be set before calculating score
 
     [SyncVar]
     bool cambrioCalled;
@@ -55,10 +57,7 @@ public class Controller : NetworkBehaviour {
         {
             for(int i = 0; i < numPlayers; i++)
             {
-                if(!players[i].isWaiting())
-                {
-                    break;
-                }
+                if(!players[i].isWaiting()) break;
                 if(i == numPlayers - 1)
                 {
                     beginning = false;
@@ -67,11 +66,30 @@ public class Controller : NetworkBehaviour {
                 }
             }
         }
+        if(cambrioing)
+        {
+            for (int i = 0; i < numPlayers; i++)
+            {
+                if (players[i].isSettingCard()) break; //wait until all players are done setting cards
+                if (i == numPlayers - 1)
+                {
+                    cambrioing = false;
+                    finishGame();
+                }
+            }
+        }
 	}
     
-    public void addPlayer(PlayerScript p) //only the server needs to have a populated players array
+    public void addPlayer(PlayerScript p)
     {
-        players[numPlayers] = p;
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i] == null)
+            {
+                players[i] = p;
+                break;
+            }
+        }
         numPlayers++;
 
         if (numPlayers == 1) //DEBUG
@@ -83,13 +101,23 @@ public class Controller : NetworkBehaviour {
             p.setName("Ethan");
         }
     }
-
+    
     [Command]
     public void CmdStartGame()
     {
+        for(int i = 0; i < numPlayers; i++)
+        {
+            RpcPopulatePlayers(i, players[i].gameObject);
+        }
         decking = false;
         StartCoroutine(dealCards());
         beginning = true;
+    }
+
+    [ClientRpc]
+    public void RpcPopulatePlayers(int pInd, GameObject p)
+    {
+        players[pInd] = p.GetComponent<PlayerScript>();
     }
 
     IEnumerator dealCards()
@@ -122,7 +150,7 @@ public class Controller : NetworkBehaviour {
         currPlayerInd = (currPlayerInd + 1) % numPlayers;
         if (cambrioCalled && currPlayerInd == cambrioInd)
         {
-            finishGame();
+            cambrioing = true;
         }
         else
         {
@@ -132,37 +160,22 @@ public class Controller : NetworkBehaviour {
         
     }
 
-    public void highlightOtherPlayerCards()
-    {
-        int pInd = (currPlayerInd + 1) % numPlayers;
-        while(pInd != currPlayerInd)
-        {
-            players[pInd].highlightHand();
-        }
-    }
-
-    public void highlightAllPlayerCards()
+    public void highlightPlayerCardsExcept(PlayerScript playerToAvoid)
     {
         for(int i = 0; i < numPlayers; i++)
         {
-            players[i].highlightHand();
+            if (players[i] != null && (playerToAvoid == null || players[i] != playerToAvoid))
+            {
+                players[i].highlightHand();
+            }
         }
     }
 
-    public void unhighlightOtherPlayerCards()
-    {
-        int pInd = (currPlayerInd + 1) % numPlayers;
-        while (pInd != currPlayerInd)
-        {
-            players[pInd].unhighlightHand();
-        }
-    }
-
-    public void unhighlightAllPlayerCards()
+    public void unhighlightPlayerCardsExcept(PlayerScript playerToAvoid)
     {
         for (int i = 0; i < numPlayers; i++)
         {
-            players[i].unhighlightHand();
+            if (players[i] != null && (playerToAvoid == null || players[i] != playerToAvoid)) players[i].unhighlightHand();
         }
     }
 
@@ -177,13 +190,24 @@ public class Controller : NetworkBehaviour {
         cambrioInd = currPlayerInd;
     }
 
+    [ClientRpc]
+    public void RpcRevealHands()
+    {
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i] != null) players[i].revealHand();
+        }
+    }
+
     public void finishGame()
     {
+        RpcRevealHands();
         int minScore = MAX_HAND_VALUE;
         Queue<int> minIndices = new Queue<int>();
         int score;
-        for(int i = 0; i < numPlayers; i++)
+        for(int i = 0; i < players.Length; i++)
         {
+            if (players[i] == null) continue;
             score = players[i].getScore();
             if(score < minScore)
             {
@@ -191,7 +215,7 @@ public class Controller : NetworkBehaviour {
                 minIndices.Clear();
                 minIndices.Enqueue(i);
             }
-            if(score == minScore)
+            else if(score == minScore)
             {
                 minIndices.Enqueue(i);
             }
