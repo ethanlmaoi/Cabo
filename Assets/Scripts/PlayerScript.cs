@@ -256,15 +256,9 @@ public class PlayerScript : NetworkBehaviour {
             if (activeCard.getNum() == PEEK_SELF_7 || activeCard.getNum() == PEEK_SELF_8)
             {
                 CmdUpdateMode(Modes.PEEK);
-<<<<<<< HEAD
-=======
                 this.highlightHand();
-
->>>>>>> 738ab0a2359b1eb20659c024cf534897939fd434
                 Debug.Log("peek self");
                 peekingSelf = true;
-                // ETHAN: animation highlight own cards to peek
-                highlightHandCards();
 
             }
             else if (activeCard.getNum() == PEEK_OTHER_9 || activeCard.getNum() == PEEK_OTHER_10)
@@ -305,8 +299,10 @@ public class PlayerScript : NetworkBehaviour {
 
             int handInd = this.findHandCard(hit.transform.GetComponent<HandCard>());
             this.CmdSetCard(handInd, activeCard.gameObject);
+
+            activeCard.toggleCard(); // NEEDS FIX: OLD CARD IS LOOKING FACE DOWN FOR ONE PERSON AND FACE UP FOR THE OTHER PERSON
+
             this.CmdDiscardCard(oldCard.gameObject);
-            //TODO add animations for replacing card and discarding old card
             this.CmdFinishTurn();
             discard.unhighlightDiscard();
             this.unhighlightHand();
@@ -584,6 +580,7 @@ public class PlayerScript : NetworkBehaviour {
         {
             hand[handInd].setCard(card.GetComponent<Card>());
             card.GetComponent<Card>().setMoveTarget(hand[handInd].transform.position);
+            card.GetComponent<AssetRenderer>().replaceCard(); // plays animation to shrink back card
         }
         else
         {

@@ -63,21 +63,6 @@ public class Deck : NetworkBehaviour {
                 shuffleDeck.Push(card);
             }
 
-            // DEBUG PURPOSES FOR PEEK AND SWAP
-            //for (int i = 0; i <= 20; i++)
-           // {
-           //    GameObject card = (GameObject)Instantiate(cardPrefab, offscreenPosition, this.transform.rotation);
-            //    card = (GameObject)Instantiate(cardPrefab, offscreenPosition, this.transform.rotation);
-           //     card.GetComponent<Card>().setNum(7);
-           //     card.GetComponent<Card>().setSuit(Card.Suit.SPADES);
-           //     NetworkServer.Spawn(card);
-           //     shuffleDeck.Push(card);
-<<<<<<< HEAD
-           // }
-=======
-            //}
->>>>>>> 738ab0a2359b1eb20659c024cf534897939fd434
-
             shuffle();
             GameObject.FindGameObjectWithTag("GameStarter").GetComponentInChildren<TextMesh>().text = "Start Game";
         }

@@ -30,6 +30,7 @@ public class AssetRenderer : MonoBehaviour {
 
     bool cardDrawing;
     bool discardingCard;
+    bool replacingCard;
 
     [SerializeField] GameObject highlightPrefab;
     GameObject highlight;
@@ -144,7 +145,13 @@ public class AssetRenderer : MonoBehaviour {
         {
             float step = speed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(-1.286f, -0.05f, 0f), step);
-            StartCoroutine(descaleOverTime(0.5f));
+            StartCoroutine(discardDescaleOverTime(0.5f));
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        }
+        if (replacingCard)
+        {
+            float step = speed * Time.deltaTime;
+            StartCoroutine(replaceDescaleOverTime(0.5f));
             transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         }
 
@@ -170,7 +177,7 @@ public class AssetRenderer : MonoBehaviour {
         cardDrawing = false;
     }
 
-    IEnumerator descaleOverTime(float time)
+    IEnumerator discardDescaleOverTime(float time)
     {
         Vector3 originalScale = gameObject.transform.localScale;
         Vector3 destinationScale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -184,6 +191,22 @@ public class AssetRenderer : MonoBehaviour {
             yield return null;
         } while (currentTime <= time);
         discardingCard = true;
+    }
+
+    IEnumerator replaceDescaleOverTime(float time)
+    {
+        Vector3 originalScale = gameObject.transform.localScale;
+        Vector3 destinationScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        float currentTime = 0.0f;
+
+        do
+        {
+            gameObject.transform.localScale = Vector3.Lerp(originalScale, destinationScale, currentTime / time);
+            currentTime += Time.deltaTime;
+            yield return null;
+        } while (currentTime <= time);
+        replacingCard = true;
     }
 
     public void highlightCard()
@@ -211,5 +234,10 @@ public class AssetRenderer : MonoBehaviour {
     public void discardCard()
     {
         discardingCard = true;
+    }
+
+    public void replaceCard()
+    {
+        replacingCard = true;
     }
 }
