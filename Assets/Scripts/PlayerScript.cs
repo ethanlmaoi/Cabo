@@ -208,6 +208,12 @@ public class PlayerScript : NetworkBehaviour {
         hc2.getCard().toggleCard();
     }
 
+    IEnumerator flipBack(Card currentCard)
+    {
+        yield return new WaitForSeconds(3);
+        currentCard.toggleCard();
+    }
+
     void exeDraw(RaycastHit hit)
     {
         if (hit.transform.tag == "Deck")
@@ -319,7 +325,11 @@ public class PlayerScript : NetworkBehaviour {
             {
                 Card peekCard = hit.transform.GetComponent<HandCard>().getCard();
                 Debug.Log("peeked at " + peekCard.toString());
-                //TODO play animation of revealing card
+
+                // ETHAN: added flip animation to reveal the card
+                peekCard.toggleCard();
+                flipBack(peekCard); // after 3 seconds flip back
+
                 this.CmdFinishTurn();
                 if (peekingSelf) this.unhighlightHand();
                 else control.unhighlightOtherPlayerCards();
