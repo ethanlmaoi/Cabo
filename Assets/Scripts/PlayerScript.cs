@@ -5,7 +5,7 @@ using System.Collections;
 public class PlayerScript : NetworkBehaviour {
 
     const int HAND_MAX = 6;
-    enum Modes { SPAWN, BEGIN, DRAW, TURN, PEEK, SWAP, WAITING, DOUBLING, REPLACING, CAMBRIO };
+    enum Modes { SPAWN, BEGIN, DRAW, TURN, PEEK, SWAP, KING_DECIDING, WAITING, DOUBLING, REPLACING, CAMBRIO };
     const int PEEK_SELF_7 = 7;
     const int PEEK_SELF_8 = 8;
     const int PEEK_OTHER_9 = 9;
@@ -14,6 +14,9 @@ public class PlayerScript : NetworkBehaviour {
     const int BLIND_SWAP_Q = 12;
     const int SEE_SWAP_K = 13;
     const int FLIP_TIME = 3;
+
+    public GameObject confirmButton;
+    public GameObject cancelButton;
 
     Controller control;
     Deck deck;
@@ -158,6 +161,9 @@ public class PlayerScript : NetworkBehaviour {
                         case Modes.SWAP:
                             exeSwap(hit);
                             break;
+                        case Modes.KING_DECIDING:
+                            exeKingDeciding(hit);
+                            break;
                         case Modes.WAITING:
                             exeWaiting(hit);
                             break;
@@ -174,14 +180,11 @@ public class PlayerScript : NetworkBehaviour {
 	}
 
     // ETHAN: function that helps flip back the selected two cards with a delay
-    IEnumerator flipBack()
+    IEnumerator flipBack(HandCard hand1, HandCard hand2)
     {
         yield return new WaitForSeconds(FLIP_TIME);
-        if (hc1 != null && hc1.getCard() != null) hc1.getCard().flipDown(); //guarantees it always flip down and not up
-        if (hc2 != null && hc2.getCard() != null) hc2.getCard().flipDown();
-
-        hc1 = null;
-        hc2 = null;
+        if (hand1 != null && hand1.getCard() != null) hand1.getCard().flipDown(); //guarantees it always flip down and not up
+        if (hand2 != null && hand2.getCard() != null) hand2.getCard().flipDown();
     }
 
     void exeBegin(RaycastHit hit)
@@ -207,7 +210,7 @@ public class PlayerScript : NetworkBehaviour {
                 Debug.Log("flipping second card: " + hc2.getCard().toString());
 
                 // ETHAN: added animation that flips back the selected two cards (after flipBack() delay)
-                StartCoroutine(flipBack());
+                StartCoroutine(flipBack(hc1, hc2));
                 Debug.Log("flipped back: " + hc1.getCard().toString() + " and " + hc2.getCard().toString());
 
                 chosenCards = 0;
@@ -269,6 +272,7 @@ public class PlayerScript : NetworkBehaviour {
             {
                 CmdUpdateMode(Modes.PEEK);
                 this.highlightHand();
+                cancelButton.SetActive(true);
                 Debug.Log("peek self");
                 peekingSelf = true;
 
@@ -277,6 +281,7 @@ public class PlayerScript : NetworkBehaviour {
             {
                 CmdUpdateMode(Modes.PEEK);
                 control.highlightPlayerCardsExcept(this);
+                cancelButton.SetActive(true);
                 Debug.Log("peek other");
                 peekingSelf = false;
             }
@@ -284,6 +289,7 @@ public class PlayerScript : NetworkBehaviour {
             {
                 CmdUpdateMode(Modes.SWAP);
                 this.highlightHand();
+                cancelButton.SetActive(true);
                 Debug.Log("blind swap");
                 pickingSelfForSwap = true;
                 swapIsBlind = true;
@@ -292,6 +298,7 @@ public class PlayerScript : NetworkBehaviour {
             {
                 CmdUpdateMode(Modes.SWAP);
                 this.highlightHand();
+                cancelButton.SetActive(true);
                 Debug.Log("see swap");
                 pickingSelfForSwap = true;
                 swapIsBlind = false;
@@ -330,20 +337,28 @@ public class PlayerScript : NetworkBehaviour {
             {
                 hc1 = hit.transform.GetComponent<HandCard>();
                 hc1.getCard().flipUp();
-                StartCoroutine(flipBack());
-
+                StartCoroutine(flipBack(hc1, null));
                 this.CmdFinishTurn();
                 if (peekingSelf) this.unhighlightHand();
                 else control.unhighlightPlayerCardsExcept(this);
+                cancelButton.SetActive(false);
                 Debug.Log("waiting");
             }
         }
         else if (hit.transform.tag == "Discard")
         {
+            cancelButton.SetActive(false);
             oldMode = mode;
             CmdUpdateMode(Modes.DOUBLING);
             control.highlightPlayerCardsExcept(null);
             Debug.Log("doubling");
+        }
+        else if (hit.transform.tag == "Cancel")
+        {
+            cancelButton.SetActive(false);
+            control.unhighlightPlayerCardsExcept(null);
+            this.CmdFinishTurn();
+            Debug.Log("waiting");
         }
     }
 
@@ -368,9 +383,12 @@ public class PlayerScript : NetworkBehaviour {
 
                 if (!swapIsBlind)
                 {
-                    //TODO reveal the cards and prompt user if they want to swap
-                    //if they do, then do same as in else block
-                    //if not, then play animation for putting cards down and do nothing
+                    thisSwapCard.flipUp();
+                    otherSwapCard.flipUp();
+                    confirmButton.SetActive(true);
+                    cancelButton.SetActive(true);
+                    control.unhighlightPlayerCardsExcept(this);
+                    this.CmdUpdateMode(Modes.KING_DECIDING);
                 }
                 else
                 {
@@ -378,20 +396,57 @@ public class PlayerScript : NetworkBehaviour {
                     int otherSwapInd = otherSwapSpot.getOwner().findHandCard(otherSwapSpot);
                     this.CmdSetCard(thisSwapInd, otherSwapCard.gameObject);
                     this.CmdSetOtherPlayerCard(otherSwapSpot.getOwner().gameObject, otherSwapInd, thisSwapCard.gameObject);
-                    //TODO play animation
+                    pickingSelfForSwap = true;
+                    thisSwapSpot = null;
+                    otherSwapSpot = null;
+                    cancelButton.SetActive(false);
+                    control.unhighlightPlayerCardsExcept(this);
+                    this.CmdFinishTurn();
+                    Debug.Log("waiting");
                 }
-                pickingSelfForSwap = true;
-                control.unhighlightPlayerCardsExcept(this);
-                this.CmdFinishTurn();
-                Debug.Log("waiting");
             }
         }
-        else if (hit.transform.tag == "Discard")
+        else if (hit.transform.tag == "Discard" && pickingSelfForSwap) //can only double before picking the first card
         {
             oldMode = mode;
             CmdUpdateMode(Modes.DOUBLING);
             control.highlightPlayerCardsExcept(null);
+            cancelButton.SetActive(false);
             Debug.Log("doubling");
+        }
+        else if (hit.transform.tag == "Cancel")
+        {
+            cancelButton.SetActive(false);
+            control.unhighlightPlayerCardsExcept(null);
+            if (thisSwapSpot != null) thisSwapSpot.getCard().flipDown();
+            if (otherSwapSpot != null) otherSwapSpot.getCard().flipDown();
+            this.CmdFinishTurn();
+            Debug.Log("waiting");
+        }
+    }
+
+    void exeKingDeciding(RaycastHit hit)
+    {
+        if (hit.transform.tag == "Confirm" || hit.transform.tag == "Cancel")
+        {
+            thisSwapSpot.getCard().flipDown();
+            otherSwapSpot.getCard().flipDown();
+
+            if (hit.transform.tag == "Confirm")
+            {
+                int thisSwapInd = this.findHandCard(thisSwapSpot);
+                int otherSwapInd = otherSwapSpot.getOwner().findHandCard(otherSwapSpot);
+                this.CmdSetCard(thisSwapInd, otherSwapSpot.getCard().gameObject);
+                this.CmdSetOtherPlayerCard(otherSwapSpot.getOwner().gameObject, otherSwapInd, thisSwapSpot.getCard().gameObject);
+            }
+
+            pickingSelfForSwap = true;
+            thisSwapSpot = null;
+            otherSwapSpot = null;
+            confirmButton.SetActive(false);
+            cancelButton.SetActive(false);
+            this.CmdFinishTurn();
+            Debug.Log("waiting");
         }
     }
 
@@ -428,14 +483,12 @@ public class PlayerScript : NetworkBehaviour {
                 else
                 {
                     CmdUpdateMode(oldMode);
-                    revertHighlight();
+                    revertBoardState();
                 }
             }
             else //double incorrect, add top of discard to player's empty spot
             {
-                hc1 = doubleSpot;
-                doubleCard.flipUp();
-                StartCoroutine(flipBack());
+                this.CmdRevealOtherPlayerHandCard(doubleSpot.getOwner().gameObject, doubleSpot.getOwner().findHandCard(doubleSpot));
                 int moveDestInd = FindEmptyHandCard();
                 if (moveDestInd == -1)
                 {
@@ -443,19 +496,18 @@ public class PlayerScript : NetworkBehaviour {
                 }
                 else
                 {
-                    discard.peekTop().flipDown();
                     this.CmdSetCard(moveDestInd, discard.peekTop().gameObject);
                     this.CmdPopDiscard();
                     CmdUpdateMode(oldMode);
-                    revertHighlight();
+                    revertBoardState();
                 }
             }
         }
         else if (hit.transform.tag == "Discard")
         {
             CmdUpdateMode(oldMode);
-            control.unhighlightPlayerCardsExcept(this);
-            revertHighlight();
+            control.unhighlightPlayerCardsExcept(null);
+            revertBoardState();
             Debug.Log(oldMode);
         }
     }
@@ -473,7 +525,7 @@ public class PlayerScript : NetworkBehaviour {
                 this.CmdSetCard(replaceHandInd, null);
                 CmdUpdateMode(oldMode);
                 this.unhighlightHand();
-                revertHighlight();
+                revertBoardState();
             }
         }
     }
@@ -577,7 +629,6 @@ public class PlayerScript : NetworkBehaviour {
 
     public int FindEmptyHandCard()
     {
-        Debug.Log("finding");
         for (int i = 0; i < hand.Length; i++)
         {
             if (hand[i].getCard() == null)
@@ -603,6 +654,7 @@ public class PlayerScript : NetworkBehaviour {
             Debug.Log("hand at " + handInd + " set to " + card.GetComponent<Card>().toString());
             hand[handInd].setCard(card.GetComponent<Card>());
             card.GetComponent<Card>().setMoveTarget(hand[handInd].transform.position);
+            card.GetComponent<Card>().flipDown();
             card.GetComponent<AssetRenderer>().replaceCard(); // plays animation to shrink back card
         }
         else
@@ -648,7 +700,7 @@ public class PlayerScript : NetworkBehaviour {
         }
     }
 
-    public void revertHighlight()
+    public void revertBoardState()
     {
         switch (oldMode)
         {
@@ -658,21 +710,35 @@ public class PlayerScript : NetworkBehaviour {
             case Modes.PEEK:
                 if (peekingSelf) this.highlightHand();
                 else control.highlightPlayerCardsExcept(this);
+                cancelButton.SetActive(true);
                 break;
             case Modes.SWAP:
                 if (pickingSelfForSwap) this.highlightHand();
                 else control.highlightPlayerCardsExcept(this);
+                cancelButton.SetActive(true);
                 break;
             case Modes.WAITING:
-                //nothing is highlighted when waiting
+                //nothing is active when waiting
                 break;
         }
     }
 
+    [Command]
+    public void CmdRevealOtherPlayerHandCard(GameObject player, int handInd)
+    {
+        player.GetComponent<PlayerScript>().RpcRevealHandCard(handInd);
+    }
+
+    [ClientRpc]
+    public void RpcRevealHandCard(int handInd)
+    {
+        hand[handInd].getCard().flipUp();
+        StartCoroutine(flipBack(hand[handInd], null));
+    }
+
     public void revealHand()
     {
-        hc1 = null; //null out hc1 and hc2 in case the last player peeked before all cards flip up
-        hc2 = null; //if you don't, all cards will flip up, then the coroutine kicks in and flips a card back down
+        this.StopAllCoroutines(); //stop any running flipBack instances from flipping revealed hand back down
         for(int i = 0; i < hand.Length; i++)
         {
             if (hand[i] != null && hand[i].getCard() != null) hand[i].getCard().flipUp();
