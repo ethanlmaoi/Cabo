@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Intro : MonoBehaviour {
 
@@ -33,5 +34,10 @@ public class Intro : MonoBehaviour {
     {
         yield return new WaitForSeconds(4);
         GameObject.Instantiate(play_button);
+    }
+
+    private void OnMouseDown()
+    {
+        SceneManager.LoadScene(1);
     }
 }
