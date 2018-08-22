@@ -10,6 +10,8 @@ TagManager:
   - HandCard
   - GameStarter
   - Cambrio
+  - Confirm
+  - Cancel
   layers:
   - Default
   - TransparentFX
