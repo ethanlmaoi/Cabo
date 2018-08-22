@@ -9,18 +9,18 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1853697999265220}
+  m_RootGameObject: {fileID: 1987632494165362}
   m_IsPrefabAsset: 1
---- !u!1 &1853697999265220
+--- !u!1 &1987632494165362
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4780506315785084}
-  - component: {fileID: 95900233855798728}
-  - component: {fileID: 212486036595193412}
+  - component: {fileID: 4409438211767170}
+  - component: {fileID: 95015954625441960}
+  - component: {fileID: 212359922413764444}
   m_Layer: 0
   m_Name: cambrio_title
   m_TagString: Untagged
@@ -28,26 +28,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4780506315785084
+--- !u!4 &4409438211767170
 Transform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1853697999265220}
+  m_GameObject: {fileID: 1987632494165362}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 2.65, z: -1}
+  m_LocalScale: {x: 2.13, y: 2.13, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &95900233855798728
+--- !u!95 &95015954625441960
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1853697999265220}
+  m_GameObject: {fileID: 1987632494165362}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 74887c5ceb1d4c941ae9effd2cab0b50, type: 2}
@@ -59,12 +59,12 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!212 &212486036595193412
+--- !u!212 &212359922413764444
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1853697999265220}
+  m_GameObject: {fileID: 1987632494165362}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
