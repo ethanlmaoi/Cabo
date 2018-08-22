@@ -34,8 +34,8 @@ public class Controller : NetworkBehaviour {
     [SyncVar]
     int cambrioInd;
 
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
         players = new PlayerScript[MAX_PLAYERS];
         deck = deckObj.GetComponent<Deck>();
         discard = discardObj.GetComponent<Discard>();

@@ -101,7 +101,6 @@ public class Deck : NetworkBehaviour {
             deckIsReady = true;
             GameObject gameStarter = GameObject.FindGameObjectWithTag("GameStarter");
             if(gameStarter != null) gameStarter.SetActive(false);
-            
         }
     }
     
