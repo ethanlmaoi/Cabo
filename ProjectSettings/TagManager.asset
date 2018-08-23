@@ -12,6 +12,8 @@ TagManager:
   - Cambrio
   - Confirm
   - Cancel
+  - PlayButton
+  - Networker
   layers:
   - Default
   - TransparentFX

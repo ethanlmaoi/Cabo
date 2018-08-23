@@ -400,7 +400,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1505057979}
-        m_MethodName: joinGame
+        m_MethodName: joinLocalGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1447,7 +1447,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1505057979}
-        m_MethodName: hostGame
+        m_MethodName: createOnlineGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1569,7 +1569,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1505057979}
-        m_MethodName: joinGame
+        m_MethodName: joinOnlineGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2230,10 +2230,30 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: onlineCreateRoomField
+      value: 
+      objectReference: {fileID: 1992464843}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: onlineJoinRoomField
+      value: 
+      objectReference: {fileID: 2042353474}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: localCreateRoomField
+      value: 
+      objectReference: {fileID: 1941232451}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: localJoinRoomField
+      value: 
+      objectReference: {fileID: 1573582960}
     - target: {fileID: 114793626634024188, guid: 10620401f71154948abeb3dc20e48dd1,
         type: 2}
-      propertyPath: m_OfflineScene
-      value: MenuScene
+      propertyPath: m_AutoCreatePlayer
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10620401f71154948abeb3dc20e48dd1, type: 2}
@@ -2395,7 +2415,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1505057979}
-        m_MethodName: hostGame
+        m_MethodName: createLocalGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2453,7 +2473,7 @@ GameObject:
   - component: {fileID: 1573582961}
   - component: {fileID: 1573582960}
   m_Layer: 5
-  m_Name: Join Room Name Field
+  m_Name: Local Join Room Name Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3149,7 +3169,7 @@ GameObject:
   - component: {fileID: 1941232452}
   - component: {fileID: 1941232451}
   m_Layer: 5
-  m_Name: Create Room Name Field
+  m_Name: Local Create Room Name Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3284,7 +3304,7 @@ GameObject:
   - component: {fileID: 1992464844}
   - component: {fileID: 1992464843}
   m_Layer: 5
-  m_Name: Create Room Name Field
+  m_Name: Online Create Room Name Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3617,7 +3637,7 @@ GameObject:
   - component: {fileID: 2042353475}
   - component: {fileID: 2042353474}
   m_Layer: 5
-  m_Name: Join Room Name Field
+  m_Name: Online Join Room Name Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
