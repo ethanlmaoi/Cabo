@@ -52,12 +52,14 @@ public class Controller : NetworkBehaviour {
         if (decking && deck.isReady() && deck.peekTop().transform.position.x == deck.transform.position.x)
         {
             CmdStartGame();
+            decking = false;
         }
         if(beginning)
         {
             for(int i = 0; i < numPlayers; i++)
             {
-                if(!players[i].isWaiting()) break;
+                if (players[i] == null) continue;
+                if (!players[i].isWaiting()) break;
                 if(i == numPlayers - 1)
                 {
                     beginning = false;
@@ -79,48 +81,37 @@ public class Controller : NetworkBehaviour {
         }
 	}
     
-    public void addPlayer(PlayerScript p)
-    {
-        for (int i = 0; i < players.Length; i++)
-        {
-            if (players[i] == null)
-            {
-                players[i] = p;
-                break;
-            }
-        }
-        numPlayers++;
-
-        if (numPlayers == 1) //DEBUG
-        {
-            p.setName("Charles");
-        }
-        else if (numPlayers == 2)
-        {
-            p.setName("Ethan");
-        }
-    }
-    
     [Command]
     public void CmdStartGame()
     {
-        for(int i = 0; i < numPlayers; i++)
-        {
-            RpcPopulatePlayers(i, players[i].gameObject);
-        }
-        decking = false;
-        StartCoroutine(dealCards());
-        beginning = true;
+        RpcPopulatePlayers(GameObject.FindGameObjectWithTag("Networker").GetComponent<Networker>().getPlayers());
     }
 
     [ClientRpc]
-    public void RpcPopulatePlayers(int pInd, GameObject p)
+    public void RpcPopulatePlayers(GameObject[] p)
     {
-        players[pInd] = p.GetComponent<PlayerScript>();
+        for (int pInd = 0; pInd < p.Length; pInd++)
+        {
+            if (p[pInd] != null)
+            {
+                Debug.Log("setting " + pInd + " to " + p[pInd]);
+                players[pInd] = p[pInd].GetComponent<PlayerScript>();
+
+                if (isServer) {
+                    numPlayers++;
+                    if (numPlayers == GameObject.FindGameObjectWithTag("Networker").GetComponent<Networker>().getNumSpawned())
+                    {
+                        StartCoroutine(dealCards());
+                    }
+                }
+            }
+        }
     }
 
     IEnumerator dealCards()
     {
+        beginning = true;
+        Debug.Log("beginning game");
         foreach (PlayerScript player in players)
         {
             if (player == null) continue;
@@ -131,7 +122,6 @@ public class Controller : NetworkBehaviour {
             }
             player.RpcBegin();
         }
-        
     }
 
     public void nextPlayerTurn()

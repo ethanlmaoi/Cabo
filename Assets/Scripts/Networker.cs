@@ -3,12 +3,18 @@ using UnityEngine.Networking;
 using System.Collections;
 
 public class Networker : NetworkManager {
+    const int MAX_PLAYERS = 2;
+    GameObject[] players;
+    int numSpawned;
 
-    int numSpawned = 0;
+    private void Awake()
+    {
+        players = new GameObject[MAX_PLAYERS];
+        numSpawned = 0;
+    }
 
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
-        numSpawned++;
         Transform[] pos = startPositions.ToArray();
         Vector3 spawnPos = Vector3.zero;
         Quaternion spawnRot = Quaternion.identity;
@@ -22,7 +28,8 @@ public class Networker : NetworkManager {
         }
         GameObject player = (GameObject)Instantiate(playerPrefab, spawnPos, spawnRot);
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
-        GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>().addPlayer(player.GetComponent<PlayerScript>());
+        players[numSpawned] = player;
+        numSpawned++;
     }
 
     public override void OnStartHost()
@@ -34,5 +41,15 @@ public class Networker : NetworkManager {
     {
         numSpawned--;
         base.OnServerDisconnect(conn);
+    }
+
+    public GameObject[] getPlayers()
+    {
+        return players;
+    }
+
+    public int getNumSpawned()
+    {
+        return numSpawned;
     }
 }
