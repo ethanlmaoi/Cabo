@@ -10,16 +10,9 @@ public class AssetRenderer : MonoBehaviour {
     const int QUEEN = 12;
     const int KING = 13;
 
-    int deckHeight = 0;
-    int discardHeight = 0;
-
     string num;
     string suit;
     string fileName;
-
-    bool move = false;
-    float speed = 30.0f;
-    Transform target;
 
     const float HAND_CARD_1_X_POS = -2.55f;
     const float HAND_CARD_2_X_POS = -0.85f;
@@ -116,9 +109,6 @@ public class AssetRenderer : MonoBehaviour {
         gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + fileName);
         gameObject.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Animations/" + fileName);
         // gameObject.GetComponent<NetworkAnimator>().animator = GetComponent<Animator>();
-
-        // moveObject stuff
-        target = GameObject.FindGameObjectWithTag("Deck").GetComponent<Transform>();
     }
 
     void Update()
@@ -182,6 +172,7 @@ public class AssetRenderer : MonoBehaviour {
             currentTime += Time.deltaTime;
             yield return null;
         } while (currentTime <= time);
+        discardingCard = false;
     }
 
     IEnumerator replaceDescaleOverTime(float time)
@@ -197,7 +188,7 @@ public class AssetRenderer : MonoBehaviour {
             currentTime += Time.deltaTime;
             yield return null;
         } while (currentTime <= time);
-        replacingCard = true;
+        replacingCard = false;
     }
 
     public void highlightCard()

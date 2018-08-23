@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class Discard : NetworkBehaviour {
 
     const float CARD_HEIGHT_DIFF = -0.1f;
+    const int OFFSCREEN_OFFSET = 20;
 
     Stack<Card> discard;
 
@@ -42,7 +43,7 @@ public class Discard : NetworkBehaviour {
 
     public void popCard()
     {
-        if(isServer) RpcPopCard();
+        discard.Pop();
     }
 
     [ClientRpc]
@@ -51,20 +52,29 @@ public class Discard : NetworkBehaviour {
         discard.Pop();
     }
     
-    public void shuffleIntoDeck(Deck deck) //shuffle discard cards back into deck
+    [ClientRpc]
+    public void RpcShuffleIntoDeck(GameObject d) //shuffle discard cards back into deck
     {
         if(!isServer)
         {
-            Debug.Log("nonserver discard trying to shuffle into deck");
             return;
         }
+        Deck deck = d.GetComponent<Deck>();
         while(discard.Count > 0)
         {
-            deck.addToShuffleDeck(peekTop().gameObject);
-            RpcPopCard();
+            if (isServer)
+            {
+                deck.addToShuffleDeck(peekTop().gameObject);
+            }
+            peekTop().setMoveTarget(d.transform.position + new Vector3(OFFSCREEN_OFFSET, 0, 0));
+            peekTop().flipDown();
+            popCard();
         }
-        deck.shuffle(); //shouldn't need to check if done shuffling because this call is not asynchronous
-        deck.deckCards();
+        if (isServer)
+        {
+            deck.shuffle(); //shouldn't need to check if done shuffling because this call is not asynchronous
+            StartCoroutine(deck.deckCards());
+        }
     }
 
     public void highlightDiscard()

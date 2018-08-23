@@ -12,7 +12,7 @@ public class NetworkerHUD : MonoBehaviour {
         manager = GetComponent<NetworkManager>();
 	}
 	
-	public void startGame()
+	public void hostGame()
     {
         manager.StartHost();
     }

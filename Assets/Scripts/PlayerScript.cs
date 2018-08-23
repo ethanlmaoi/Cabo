@@ -5,7 +5,7 @@ using System.Collections;
 public class PlayerScript : NetworkBehaviour {
 
     const int HAND_MAX = 6;
-    enum Modes { SPAWN, BEGIN, DRAW, TURN, PEEK, SWAP, KING_DECIDING, WAITING, DOUBLING, REPLACING, CAMBRIO };
+    enum Modes { SPAWN, BEGIN, DRAW, TURN, PEEK, SWAP, KING_DECIDING, WAITING, DOUBLING, REPLACING, CAMBRIO, OUT };
     const int PEEK_SELF_7 = 7;
     const int PEEK_SELF_8 = 8;
     const int PEEK_OTHER_9 = 9;
@@ -143,7 +143,6 @@ public class PlayerScript : NetworkBehaviour {
                         //shuffling is already done, just need to transfer cards from shuffle deck to normal deck
                         StartCoroutine(deck.deckCards());
                     }
-                    Debug.Log(this.getName() + " hit " + hit.transform + " while in " + mode);
                     switch (mode)
                     {
                         case Modes.BEGIN:
@@ -197,33 +196,29 @@ public class PlayerScript : NetworkBehaviour {
                 // ETHAN: added animation that flips the selected FIRST card
                 hc1 = hit.transform.GetComponent<HandCard>();
                 hc1.getCard().toggleCard();
-                Debug.Log("flipping first card: " + hc1.getCard().toString());
 
                 chosenCards++;
-                Debug.Log(chosenCards);
             }
             else if (chosenCards == 1 && hit.transform.GetComponent<HandCard>() != hc1)
             {
                 // ETHAN: added animation that flips the selected SECOND card
                 hc2 = hit.transform.GetComponent<HandCard>();
                 hc2.getCard().toggleCard();
-                Debug.Log("flipping second card: " + hc2.getCard().toString());
 
                 // ETHAN: added animation that flips back the selected two cards (after flipBack() delay)
                 StartCoroutine(flipBack(hc1, hc2));
-                Debug.Log("flipped back: " + hc1.getCard().toString() + " and " + hc2.getCard().toString());
 
                 chosenCards = 0;
                 this.unhighlightHand();
                 CmdUpdateMode(Modes.WAITING);
-                Debug.Log("waiting");
+                //Debug.Log("waiting");
             }
         }
     }
 
     void exeDraw(RaycastHit hit)
     {
-        if (hit.transform.tag == "Deck")
+        if (hit.transform.tag == "Deck" && deck.isReady())
         {
             activeCard = deck.peekTop();
             this.CmdMoveToActiveCard(activeCard.gameObject);
@@ -238,7 +233,7 @@ public class PlayerScript : NetworkBehaviour {
             deck.unhighlightDeck();
             discard.highlightDiscard();
             this.highlightHand();
-            Debug.Log("turn");
+            //Debug.Log("turn");
         }
         else if (hit.transform.tag == "Discard" && discard.peekTop() != null)
         {
@@ -246,13 +241,13 @@ public class PlayerScript : NetworkBehaviour {
             CmdUpdateMode(Modes.DOUBLING);
             deck.unhighlightDeck();
             control.highlightPlayerCardsExcept(null);
-            Debug.Log("doubling");
+            //Debug.Log("doubling");
         }
         else if (hit.transform.tag == "Cambrio" && !control.cambrioIsCalled())
         {
             this.CmdCallCambrio();
             deck.unhighlightDeck();
-            Debug.Log("cambrio");
+            //Debug.Log("cambrio");
         }
     }
 
@@ -260,7 +255,6 @@ public class PlayerScript : NetworkBehaviour {
     {
         if (hit.transform.tag == "Discard")
         {
-            Debug.Log("discarded " + activeCard.toString());
             this.CmdDiscardCard(activeCard.gameObject);
             discard.unhighlightDiscard();
             this.unhighlightHand();
@@ -273,7 +267,7 @@ public class PlayerScript : NetworkBehaviour {
                 CmdUpdateMode(Modes.PEEK);
                 this.highlightHand();
                 cancelButton.SetActive(true);
-                Debug.Log("peek self");
+                //Debug.Log("peek self");
                 peekingSelf = true;
 
             }
@@ -282,7 +276,7 @@ public class PlayerScript : NetworkBehaviour {
                 CmdUpdateMode(Modes.PEEK);
                 control.highlightPlayerCardsExcept(this);
                 cancelButton.SetActive(true);
-                Debug.Log("peek other");
+                //Debug.Log("peek other");
                 peekingSelf = false;
             }
             else if (activeCard.getNum() == BLIND_SWAP_J || activeCard.getNum() == BLIND_SWAP_Q)
@@ -290,7 +284,7 @@ public class PlayerScript : NetworkBehaviour {
                 CmdUpdateMode(Modes.SWAP);
                 this.highlightHand();
                 cancelButton.SetActive(true);
-                Debug.Log("blind swap");
+                //Debug.Log("blind swap");
                 pickingSelfForSwap = true;
                 swapIsBlind = true;
             }
@@ -299,7 +293,7 @@ public class PlayerScript : NetworkBehaviour {
                 CmdUpdateMode(Modes.SWAP);
                 this.highlightHand();
                 cancelButton.SetActive(true);
-                Debug.Log("see swap");
+                //Debug.Log("see swap");
                 pickingSelfForSwap = true;
                 swapIsBlind = false;
             }
@@ -307,13 +301,12 @@ public class PlayerScript : NetworkBehaviour {
             {
                 activeCard = null;
                 this.CmdFinishTurn();
-                Debug.Log("waiting");
+                //Debug.Log("waiting");
             }
         }
         else if (hit.transform.tag == "HandCard" && hit.transform.GetComponent<HandCard>().getCard() != null &&
             hit.transform.GetComponent<HandCard>().getOwner() == this)
         {
-            Debug.Log("replacing " + hit.transform);
             Card oldCard = hit.transform.GetComponent<HandCard>().getCard();
 
             int handInd = this.findHandCard(hit.transform.GetComponent<HandCard>());
@@ -324,7 +317,7 @@ public class PlayerScript : NetworkBehaviour {
             this.CmdFinishTurn();
             discard.unhighlightDiscard();
             this.unhighlightHand();
-            Debug.Log("waiting");
+            //Debug.Log("waiting");
         }
     }
 
@@ -342,7 +335,7 @@ public class PlayerScript : NetworkBehaviour {
                 if (peekingSelf) this.unhighlightHand();
                 else control.unhighlightPlayerCardsExcept(this);
                 cancelButton.SetActive(false);
-                Debug.Log("waiting");
+                //Debug.Log("waiting");
             }
         }
         else if (hit.transform.tag == "Discard")
@@ -351,14 +344,14 @@ public class PlayerScript : NetworkBehaviour {
             oldMode = mode;
             CmdUpdateMode(Modes.DOUBLING);
             control.highlightPlayerCardsExcept(null);
-            Debug.Log("doubling");
+            //Debug.Log("doubling");
         }
         else if (hit.transform.tag == "Cancel")
         {
             cancelButton.SetActive(false);
             control.unhighlightPlayerCardsExcept(null);
             this.CmdFinishTurn();
-            Debug.Log("waiting");
+            //Debug.Log("waiting");
         }
     }
 
@@ -402,7 +395,7 @@ public class PlayerScript : NetworkBehaviour {
                     cancelButton.SetActive(false);
                     control.unhighlightPlayerCardsExcept(this);
                     this.CmdFinishTurn();
-                    Debug.Log("waiting");
+                    //Debug.Log("waiting");
                 }
             }
         }
@@ -412,7 +405,7 @@ public class PlayerScript : NetworkBehaviour {
             CmdUpdateMode(Modes.DOUBLING);
             control.highlightPlayerCardsExcept(null);
             cancelButton.SetActive(false);
-            Debug.Log("doubling");
+            //Debug.Log("doubling");
         }
         else if (hit.transform.tag == "Cancel")
         {
@@ -421,7 +414,7 @@ public class PlayerScript : NetworkBehaviour {
             if (thisSwapSpot != null) thisSwapSpot.getCard().flipDown();
             if (otherSwapSpot != null) otherSwapSpot.getCard().flipDown();
             this.CmdFinishTurn();
-            Debug.Log("waiting");
+            //Debug.Log("waiting");
         }
     }
 
@@ -446,7 +439,7 @@ public class PlayerScript : NetworkBehaviour {
             confirmButton.SetActive(false);
             cancelButton.SetActive(false);
             this.CmdFinishTurn();
-            Debug.Log("waiting");
+            //Debug.Log("waiting");
         }
     }
 
@@ -457,7 +450,7 @@ public class PlayerScript : NetworkBehaviour {
             oldMode = mode;
             CmdUpdateMode(Modes.DOUBLING);
             control.highlightPlayerCardsExcept(null);
-            Debug.Log("doubling");
+            //Debug.Log("doubling");
         }
     }
 
@@ -478,7 +471,7 @@ public class PlayerScript : NetworkBehaviour {
                 {
                     CmdUpdateMode(Modes.REPLACING);
                     this.highlightHand();
-                    Debug.Log("replacing");
+                    //Debug.Log("replacing");
                 }
                 else
                 {
@@ -490,9 +483,10 @@ public class PlayerScript : NetworkBehaviour {
             {
                 this.CmdRevealOtherPlayerHandCard(doubleSpot.getOwner().gameObject, doubleSpot.getOwner().findHandCard(doubleSpot));
                 int moveDestInd = FindEmptyHandCard();
-                if (moveDestInd == -1)
+                if (moveDestInd == -1) //no more empty spots, so you lose
                 {
-                    //lose
+                    this.CmdUpdateMode(Modes.OUT);
+                    this.CmdRevealHand();
                 }
                 else
                 {
@@ -508,7 +502,7 @@ public class PlayerScript : NetworkBehaviour {
             CmdUpdateMode(oldMode);
             control.unhighlightPlayerCardsExcept(null);
             revertBoardState();
-            Debug.Log(oldMode);
+            //Debug.Log(oldMode);
         }
     }
 
@@ -541,7 +535,7 @@ public class PlayerScript : NetworkBehaviour {
     {
         mode = Modes.BEGIN;
         if(this.isLocalPlayer) this.highlightHand();
-        Debug.Log("begin");
+        //Debug.Log("begin");
     }
 
     public bool isWaiting()
@@ -552,6 +546,11 @@ public class PlayerScript : NetworkBehaviour {
     public bool isCambrio()
     {
         return mode == Modes.CAMBRIO;
+    }
+
+    public bool isOut()
+    {
+        return mode == Modes.OUT;
     }
 
     [ClientRpc]
@@ -589,7 +588,7 @@ public class PlayerScript : NetworkBehaviour {
     [Command]
     public void CmdPopDiscard()
     {
-        discard.popCard();
+        discard.RpcPopCard();
     }
 
     [Command]
@@ -651,7 +650,7 @@ public class PlayerScript : NetworkBehaviour {
     {
         if (card != null)
         {
-            Debug.Log("hand at " + handInd + " set to " + card.GetComponent<Card>().toString());
+            //Debug.Log("hand at " + handInd + " set to " + card.GetComponent<Card>().toString());
             hand[handInd].setCard(card.GetComponent<Card>());
             card.GetComponent<Card>().setMoveTarget(hand[handInd].transform.position);
             card.GetComponent<Card>().flipDown();
@@ -734,6 +733,18 @@ public class PlayerScript : NetworkBehaviour {
     {
         hand[handInd].getCard().flipUp();
         StartCoroutine(flipBack(hand[handInd], null));
+    }
+
+    [Command]
+    public void CmdRevealHand()
+    {
+        RpcRevealHand();
+    }
+
+    [ClientRpc]
+    public void RpcRevealHand()
+    {
+        revealHand();
     }
 
     public void revealHand()

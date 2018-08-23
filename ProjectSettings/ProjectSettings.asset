@@ -785,9 +785,9 @@ PlayerSettings:
     Unity_Ads: 0
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
-  cloudProjectId: 4b95c4dd-3e2d-4fe8-a05d-eacdbda0ebfb
+  cloudProjectId: 50d2db46-ea45-456c-be3d-acdc48779b1c
   projectName: Cambrio
-  organizationId: marineethan
+  organizationId: sircv
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

@@ -77,12 +77,20 @@ public class Deck : NetworkBehaviour {
     {
         return deckIsReady;
     }
+    public void setDeckNotReady()
+    {
+        deckIsReady = false;
+    }
     
     public IEnumerator deckCards()
     {
         if(!isServer)
         {
             yield break;
+        }
+        if (!doneShuffling)
+        {
+            yield return new WaitUntil(() => doneShuffling);
         }
         while(shuffleDeck.Count > 0)
         {
@@ -172,13 +180,6 @@ public class Deck : NetworkBehaviour {
     public void addToShuffleDeck(GameObject card)
     {
         shuffleDeck.Push(card);
-        RpcMoveToShuffleDeck(card);
-    }
-
-    [ClientRpc]
-    public void RpcMoveToShuffleDeck(GameObject card)
-    {
-        card.GetComponent<Card>().setMoveTarget(offscreenPosition);
     }
 
     public void highlightDeck()

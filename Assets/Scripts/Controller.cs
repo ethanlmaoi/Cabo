@@ -62,7 +62,6 @@ public class Controller : NetworkBehaviour {
                 {
                     beginning = false;
                     nextPlayerTurn();
-                    Debug.Log("beginning game");
                 }
             }
         }
@@ -139,13 +138,7 @@ public class Controller : NetworkBehaviour {
     {
         if(!isServer)
         {
-            Debug.Log("nonserver controller trying to start next player turn");
             return;
-        }
-        if (deck.size() == 0)
-        {
-            Debug.Log("shuffling discard into deck");
-            discard.shuffleIntoDeck(deck);
         }
         currPlayerInd = (currPlayerInd + 1) % numPlayers;
         if (cambrioCalled && currPlayerInd == cambrioInd)
@@ -154,10 +147,20 @@ public class Controller : NetworkBehaviour {
         }
         else
         {
-            Debug.Log("setting " + players[currPlayerInd].getName() + " to start turn");
-            players[currPlayerInd].RpcStartTurn();
+            if (deck.size() == 0) {
+                deck.setDeckNotReady();
+                discard.RpcShuffleIntoDeck(deck.gameObject);
+            }
+
+            if (players[currPlayerInd].isOut()) //skip players who are out
+            {
+                nextPlayerTurn();
+            }
+            else
+            {
+                players[currPlayerInd].RpcStartTurn();
+            }
         }
-        
     }
 
     public void highlightPlayerCardsExcept(PlayerScript playerToAvoid)
