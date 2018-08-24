@@ -247,7 +247,7 @@ public class PlayerScript : NetworkBehaviour {
             control.highlightPlayerCardsExcept(null);
             //Debug.Log("doubling");
         }
-        else if (hit.transform.tag == "Cambrio" && !control.cambrioIsCalled())
+        else if (hit.transform.tag == "Cambrio")
         {
             this.CmdCallCambrio();
             deck.unhighlightDeck();
@@ -614,8 +614,19 @@ public class PlayerScript : NetworkBehaviour {
     public void CmdCallCambrio()
     {
         control.callCambrio();
+        RpcDisableCambrio();
         mode = Modes.CAMBRIO;
         control.nextPlayerTurn();
+    }
+
+    [ClientRpc]
+    public void RpcDisableCambrio()
+    {
+        GameObject[] cambrioCallers = GameObject.FindGameObjectsWithTag("Cambrio");
+        foreach (GameObject caller in cambrioCallers)
+        {
+            caller.SetActive(false);
+        }
     }
 
     public int getScore()

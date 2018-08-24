@@ -48,29 +48,29 @@ public class Controller : NetworkBehaviour {
 	
 	// FixedUpdate is called independent of frame
 	void FixedUpdate () {
-        if(!isServer)
+        if(!isServer) //only server controller needs to do things
         {
             return;
         }
         if (decking && deck.isReady() && deck.peekTop().transform.position.x == deck.transform.position.x)
-        {
+        { //all cards are in deck, deal the cards
             CmdStartGame();
             decking = false;
         }
-        if(beginning)
+        if(beginning) //waiting for players to pick their first two cards to see
         {
             for(int i = 0; i < numPlayers; i++)
             {
                 if (players[i] == null) continue;
-                if (!players[i].isWaiting()) break;
-                if(i == numPlayers - 1)
+                if (!players[i].isWaiting()) break; //if any player is still picking, wait until next call
+                if(i == numPlayers - 1) //all players done picking, begin game
                 {
                     beginning = false;
                     nextPlayerTurn();
                 }
             }
         }
-        if(cambrioing)
+        if(cambrioing) //reached the end of the game, wait for final inputs to finish
         {
             for (int i = 0; i < numPlayers; i++)
             {
@@ -85,13 +85,13 @@ public class Controller : NetworkBehaviour {
 	}
     
     [Command]
-    public void CmdStartGame()
+    public void CmdStartGame() //tell client controllers the list of players
     {
         RpcPopulatePlayers(GameObject.FindGameObjectWithTag("Networker").GetComponent<Networker>().getPlayers());
     }
 
     [ClientRpc]
-    public void RpcPopulatePlayers(GameObject[] p)
+    public void RpcPopulatePlayers(GameObject[] p) //populate players so that highlighting works
     {
         for (int pInd = 0; pInd < p.Length; pInd++)
         {
@@ -99,7 +99,7 @@ public class Controller : NetworkBehaviour {
             {
                 players[pInd] = p[pInd].GetComponent<PlayerScript>();
 
-                if (isServer) {
+                if (isServer) { //host tracks number of players and dealing of cards
                     numPlayers++;
                     if (numPlayers == GameObject.FindGameObjectWithTag("Networker").GetComponent<Networker>().getNumSpawned())
                     {
@@ -110,10 +110,10 @@ public class Controller : NetworkBehaviour {
         }
     }
 
-    IEnumerator dealCards()
+    IEnumerator dealCards() //deal cards to each player with a delay between each card
     {
         beginning = true;
-        Debug.Log("beginning game");
+        //Debug.Log("beginning game");
         foreach (PlayerScript player in players)
         {
             if (player == null) continue;
@@ -126,30 +126,30 @@ public class Controller : NetworkBehaviour {
         }
     }
 
-    public void nextPlayerTurn()
+    public void nextPlayerTurn() //start next player's turn, if there is valid player to start
     {
-        if(!isServer)
+        if(!isServer) //only the server should execute this
         {
             return;
         }
-        currPlayerInd = (currPlayerInd + 1) % numPlayers;
-        if (cambrioCalled && currPlayerInd == cambrioInd)
+        currPlayerInd = (currPlayerInd + 1) % numPlayers; //move to next player index
+        if (cambrioCalled && currPlayerInd == cambrioInd) //if next player is the one who called cambrio, finish
         {
             cambrioing = true;
         }
         else
         {
-            if (deck.size() == 0) {
+            if (deck.size() == 0) { //if deck is empty, shuffle the discard back into it
                 deck.setDeckNotReady();
                 discard.RpcShuffleIntoDeck(deck.gameObject);
             }
 
             if (players[currPlayerInd].isOut()) //skip players who are out
             {
-                int i = (currPlayerInd + 1) % numPlayers;
+                int i = (currPlayerInd + 1) % numPlayers; //look for a player that isn't out 
                 while(i != currPlayerInd)
                 {
-                    if(!players[i].isOut())
+                    if(!players[i].isOut()) //non out player found, have them start their turn
                     {
                         currPlayerInd = i - 1;
                         nextPlayerTurn();
@@ -157,16 +157,16 @@ public class Controller : NetworkBehaviour {
                     }
                     i = (i + 1) & numPlayers;
                 }
-                cambrioing = true;
+                cambrioing = true; //no non out players found so all players are out, finish the game
             }
-            else
+            else //start the players turn
             {
                 players[currPlayerInd].RpcStartTurn();
             }
         }
     }
 
-    public void highlightPlayerCardsExcept(PlayerScript playerToAvoid)
+    public void highlightPlayerCardsExcept(PlayerScript playerToAvoid) //highlight the hands of unspecified players
     {
         for(int i = 0; i < numPlayers; i++)
         {
@@ -177,7 +177,7 @@ public class Controller : NetworkBehaviour {
         }
     }
 
-    public void unhighlightPlayerCardsExcept(PlayerScript playerToAvoid)
+    public void unhighlightPlayerCardsExcept(PlayerScript playerToAvoid) //unhighlight the hands of unspecified players
     {
         for (int i = 0; i < numPlayers; i++)
         {
@@ -185,19 +185,14 @@ public class Controller : NetworkBehaviour {
         }
     }
 
-    public bool cambrioIsCalled()
-    {
-        return cambrioCalled;
-    }
-
-    public void callCambrio()
+    public void callCambrio() //calls cambrio for the current player
     {
         cambrioCalled = true;
         cambrioInd = currPlayerInd;
     }
 
     [ClientRpc]
-    public void RpcRevealHands()
+    public void RpcRevealHands() //tells all players to reveal their hands
     {
         for (int i = 0; i < players.Length; i++)
         {
@@ -205,7 +200,7 @@ public class Controller : NetworkBehaviour {
         }
     }
 
-    public void finishGame()
+    public void finishGame() //game has finished, reveal hands, calculate scores, announce winner(s)
     {
         RpcRevealHands();
         int minScore = MAX_HAND_VALUE;
@@ -239,6 +234,6 @@ public class Controller : NetworkBehaviour {
             Debug.Log(players[minIndices.Dequeue()].getName() + " wins with " + minScore);
         }
         
-        quitGame.SetActive(true);
+        quitGame.SetActive(true); //allow players to quit back to main menu
     }
 }
