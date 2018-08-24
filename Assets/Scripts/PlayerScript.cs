@@ -129,11 +129,11 @@ public class PlayerScript : NetworkBehaviour {
 	void FixedUpdate () {
         if (this.isLocalPlayer)
         {
-            /*Touch touch = Input.touches[0];
-            if (touch.phase == TouchPhase.Began) {
-                Ray ray = cam.ScreenPointToRay(touch.position);*/
+            //Touch touch = Input.touches[0];
+            //if (touch.phase == TouchPhase.Began) {
+            //    Ray ray = cam.ScreenPointToRay(touch.position);
             if (Input.GetMouseButtonDown(0)) {
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+              Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if(Physics.Raycast(ray, out hit))
                 {
