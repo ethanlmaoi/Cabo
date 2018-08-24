@@ -10,6 +10,8 @@ public class Controller : NetworkBehaviour {
     const int MAX_HAND_VALUE = 75; //two black kings and four queens + 1
     const float MOVE_DELAY = 0.05f;
     
+    public GameObject quitGame;
+
     PlayerScript[] players;
 
     [SyncVar]
@@ -41,6 +43,7 @@ public class Controller : NetworkBehaviour {
         discard = discardObj.GetComponent<Discard>();
         decking = true;
         beginning = false;
+        quitGame.SetActive(false);
     }
 	
 	// FixedUpdate is called independent of frame
@@ -94,7 +97,6 @@ public class Controller : NetworkBehaviour {
         {
             if (p[pInd] != null)
             {
-                Debug.Log("setting " + pInd + " to " + p[pInd]);
                 players[pInd] = p[pInd].GetComponent<PlayerScript>();
 
                 if (isServer) {
@@ -144,7 +146,18 @@ public class Controller : NetworkBehaviour {
 
             if (players[currPlayerInd].isOut()) //skip players who are out
             {
-                nextPlayerTurn();
+                int i = (currPlayerInd + 1) % numPlayers;
+                while(i != currPlayerInd)
+                {
+                    if(!players[i].isOut())
+                    {
+                        currPlayerInd = i - 1;
+                        nextPlayerTurn();
+                        return;
+                    }
+                    i = (i + 1) & numPlayers;
+                }
+                cambrioing = true;
             }
             else
             {
@@ -225,5 +238,7 @@ public class Controller : NetworkBehaviour {
         {
             Debug.Log(players[minIndices.Dequeue()].getName() + " wins with " + minScore);
         }
+        
+        quitGame.SetActive(true);
     }
 }

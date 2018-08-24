@@ -23,6 +23,11 @@ public class Discard : NetworkBehaviour {
 	
 	}
 
+    public int size()
+    {
+        return discard.Count;
+    }
+
     public void addCard(GameObject card)
     {
         if(isServer) RpcAddCard(card);

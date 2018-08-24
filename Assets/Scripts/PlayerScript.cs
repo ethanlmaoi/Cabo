@@ -114,14 +114,14 @@ public class PlayerScript : NetworkBehaviour {
             cam = GetComponentInChildren<Camera>();
             cam.enabled = true;
             GetComponentInChildren<AudioListener>().enabled = true;
-        }
 
-        if(!this.isServer)
-        {
-            GameObject gameStarter = GameObject.FindGameObjectWithTag("GameStarter");
-            if(gameStarter != null)
+            if (!this.isServer)
             {
-                gameStarter.SetActive(false);
+                GameObject gameStarter = GameObject.FindGameObjectWithTag("GameStarter");
+                if (gameStarter != null)
+                {
+                    gameStarter.SetActive(false);
+                }
             }
         }
 	}
@@ -142,6 +142,10 @@ public class PlayerScript : NetworkBehaviour {
                         hit.transform.GetComponentInChildren<TextMesh>().text = "Shuffling";
                         //shuffling is already done, just need to transfer cards from shuffle deck to normal deck
                         StartCoroutine(deck.deckCards());
+                    }
+                    else if(this.isServer && hit.transform.tag == "QuitGame")
+                    {
+                        GameObject.FindGameObjectWithTag("Networker").GetComponent<Networker>().StopHost();
                     }
                     switch (mode)
                     {
@@ -235,7 +239,7 @@ public class PlayerScript : NetworkBehaviour {
             this.highlightHand();
             //Debug.Log("turn");
         }
-        else if (hit.transform.tag == "Discard" && discard.peekTop() != null)
+        else if (hit.transform.tag == "Discard" && discard.size() > 0)
         {
             oldMode = mode;
             CmdUpdateMode(Modes.DOUBLING);
@@ -338,7 +342,7 @@ public class PlayerScript : NetworkBehaviour {
                 //Debug.Log("waiting");
             }
         }
-        else if (hit.transform.tag == "Discard")
+        else if (hit.transform.tag == "Discard" && discard.size() > 0)
         {
             cancelButton.SetActive(false);
             oldMode = mode;
@@ -399,7 +403,7 @@ public class PlayerScript : NetworkBehaviour {
                 }
             }
         }
-        else if (hit.transform.tag == "Discard" && pickingSelfForSwap) //can only double before picking the first card
+        else if (hit.transform.tag == "Discard" && discard.size() > 0 && pickingSelfForSwap) //can only double before picking the first card
         {
             oldMode = mode;
             CmdUpdateMode(Modes.DOUBLING);
@@ -445,7 +449,7 @@ public class PlayerScript : NetworkBehaviour {
 
     void exeWaiting(RaycastHit hit)
     {
-        if (hit.transform.tag == "Discard" && discard.peekTop() != null)
+        if (hit.transform.tag == "Discard" && discard.size() > 0)
         {
             oldMode = mode;
             CmdUpdateMode(Modes.DOUBLING);
@@ -487,6 +491,7 @@ public class PlayerScript : NetworkBehaviour {
                 {
                     this.CmdUpdateMode(Modes.OUT);
                     this.CmdRevealHand();
+                    this.CmdNextPlayer();
                 }
                 else
                 {
@@ -589,6 +594,12 @@ public class PlayerScript : NetworkBehaviour {
     public void CmdPopDiscard()
     {
         discard.RpcPopCard();
+    }
+
+    [Command]
+    public void CmdNextPlayer() //starts next player turn without setting this to waiting
+    {
+        control.nextPlayerTurn();
     }
 
     [Command]
