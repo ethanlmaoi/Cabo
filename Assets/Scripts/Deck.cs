@@ -128,7 +128,7 @@ public class Deck : NetworkBehaviour {
         deck.Pop();
     }
 
-    public Card drawCard() //only used in dealing cards at the beginning
+    public Card drawCard() //used for non remote popping
     {
         return deck.Pop();
     }

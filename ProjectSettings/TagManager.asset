@@ -14,6 +14,7 @@ TagManager:
   - Cancel
   - PlayButton
   - Networker
+  - QuitGame
   layers:
   - Default
   - TransparentFX
