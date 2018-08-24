@@ -161,7 +161,8 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114000011121211724, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: bf5053db2e015dc479d26eaf9e45473f, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &146667272
@@ -428,7 +429,6 @@ GameObject:
   - component: {fileID: 563805475}
   - component: {fileID: 563805474}
   - component: {fileID: 563805473}
-  - component: {fileID: 563805472}
   m_Layer: 0
   m_Name: Quit Game
   m_TagString: QuitGame
@@ -436,39 +436,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &563805472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114000011121211724, guid: bf5053db2e015dc479d26eaf9e45473f,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 563805471}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 191
-    i1: 80
-    i2: 83
-    i3: 219
-    i4: 46
-    i5: 1
-    i6: 93
-    i7: 196
-    i8: 121
-    i9: 210
-    i10: 110
-    i11: 175
-    i12: 158
-    i13: 69
-    i14: 71
-    i15: 63
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
 --- !u!23 &563805473
 MeshRenderer:
   m_ObjectHideFlags: 0

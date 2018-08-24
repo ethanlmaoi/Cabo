@@ -94,6 +94,6 @@ public class NetworkerHUD : MonoBehaviour {
     IEnumerator disableText(Text t)
     {
         yield return new WaitForSeconds(MESSAGE_TIME);
-        t.enabled = false;
+        if (t != null) t.enabled = false;
     }
 }

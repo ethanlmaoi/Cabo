@@ -37,6 +37,11 @@ public class Networker : NetworkManager {
         numSpawned = 0;
         base.OnStartHost();
     }
+    public override void OnStopHost()
+    {
+        numSpawned = 0;
+        base.OnStopHost();
+    }
     public override void OnServerDisconnect(NetworkConnection conn)
     {
         numSpawned--;
