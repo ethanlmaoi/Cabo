@@ -124,7 +124,6 @@ GameObject:
   - component: {fileID: 25225047}
   - component: {fileID: 25225046}
   - component: {fileID: 25225045}
-  - component: {fileID: 25225044}
   m_Layer: 5
   m_Name: Exit Button
   m_TagString: Untagged
@@ -151,18 +150,6 @@ RectTransform:
   m_AnchoredPosition: {x: -15, y: -15}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &25225044
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 25225042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a1b6aba3879c2b45a68aed01120aef1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  menu: {fileID: 1282169823}
 --- !u!114 &25225045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,8 +189,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 25225044}
-        m_MethodName: closeMenu
+      - m_Target: {fileID: 1505057979}
+        m_MethodName: closeLocalMenU
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -819,7 +806,6 @@ GameObject:
   - component: {fileID: 484459331}
   - component: {fileID: 484459330}
   - component: {fileID: 484459329}
-  - component: {fileID: 484459328}
   m_Layer: 5
   m_Name: Exit Button
   m_TagString: Untagged
@@ -846,18 +832,6 @@ RectTransform:
   m_AnchoredPosition: {x: -15, y: -15}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &484459328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 484459326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a1b6aba3879c2b45a68aed01120aef1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  menu: {fileID: 1054039162}
 --- !u!114 &484459329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -897,8 +871,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 484459328}
-        m_MethodName: closeMenu
+      - m_Target: {fileID: 1505057979}
+        m_MethodName: closeSceneMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1169,6 +1143,26 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 659368104}
   m_CullTransparentMesh: 0
+--- !u!1 &703996490 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1964856693924760, guid: 10620401f71154948abeb3dc20e48dd1,
+    type: 2}
+  m_PrefabInternal: {fileID: 1505057978}
+--- !u!114 &703996493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 703996490}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 227461547, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 0}
+  showGUI: 1
+  offsetX: 0
+  offsetY: 0
 --- !u!1 &850596936
 GameObject:
   m_ObjectHideFlags: 0
@@ -1351,7 +1345,6 @@ GameObject:
   - component: {fileID: 1054039162}
   - component: {fileID: 1054039161}
   - component: {fileID: 1054039160}
-  - component: {fileID: 1054039164}
   m_Layer: 5
   m_Name: Scene Menu
   m_TagString: Untagged
@@ -1435,19 +1428,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1054039164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1054039159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95aa8978902c2254780816fc73a0edff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onlineMenu: {fileID: 850596939}
-  localMenu: {fileID: 1282169823}
 --- !u!1 &1096611087
 GameObject:
   m_ObjectHideFlags: 0
@@ -2011,7 +1991,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1054039164}
+      - m_Target: {fileID: 1505057979}
         m_MethodName: openTutorial
         m_Mode: 1
         m_Arguments:
@@ -2168,8 +2148,6 @@ MonoBehaviour:
   play_button_anim: {fileID: 1029294627091382, guid: bc7a43fbd54c7fc4dabc4e9a4c0f41ae,
     type: 2}
   sceneMenu: {fileID: 1054039162}
-  onlineMenu: {fileID: 850596939}
-  localMenu: {fileID: 1282169823}
 --- !u!135 &1430969545
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2447,6 +2425,26 @@ Prefab:
       propertyPath: localEnterIPText
       value: 
       objectReference: {fileID: 1292503187}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: onlineMenu
+      value: 
+      objectReference: {fileID: 850596939}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: localMenu
+      value: 
+      objectReference: {fileID: 1282169823}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114332587830489080, guid: 10620401f71154948abeb3dc20e48dd1,
+        type: 2}
+      propertyPath: sceneMenu
+      value: 
+      objectReference: {fileID: 1054039162}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10620401f71154948abeb3dc20e48dd1, type: 2}
   m_IsPrefabAsset: 0
@@ -2799,7 +2797,6 @@ GameObject:
   - component: {fileID: 1737887251}
   - component: {fileID: 1737887250}
   - component: {fileID: 1737887249}
-  - component: {fileID: 1737887252}
   m_Layer: 5
   m_Name: Exit Button
   m_TagString: Untagged
@@ -2865,8 +2862,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1737887252}
-        m_MethodName: closeMenu
+      - m_Target: {fileID: 1505057979}
+        m_MethodName: closeOnlineMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2912,18 +2909,6 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1737887247}
   m_CullTransparentMesh: 0
---- !u!114 &1737887252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1737887247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a1b6aba3879c2b45a68aed01120aef1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  menu: {fileID: 850596939}
 --- !u!1 &1763167237
 GameObject:
   m_ObjectHideFlags: 0
@@ -3302,7 +3287,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1054039164}
+      - m_Target: {fileID: 1505057979}
         m_MethodName: openLocalMenu
         m_Mode: 1
         m_Arguments:
@@ -3560,7 +3545,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1054039164}
+      - m_Target: {fileID: 1505057979}
         m_MethodName: openOnlineMenu
         m_Mode: 1
         m_Arguments:

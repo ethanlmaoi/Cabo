@@ -12,14 +12,10 @@ public class Intro : MonoBehaviour {
     GameObject play_button_anim;
 
     public Canvas sceneMenu;
-    public Canvas onlineMenu;
-    public Canvas localMenu;
 
     void Awake()
     {
         sceneMenu.enabled = false;
-        onlineMenu.enabled = false;
-        localMenu.enabled = false;
     }
 
     // Use this for initialization
