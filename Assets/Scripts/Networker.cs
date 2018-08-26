@@ -40,6 +40,10 @@ public class Networker : NetworkManager {
     public override void OnStopHost()
     {
         numSpawned = 0;
+        for(int i = 0; i < players.Length; i++)
+        {
+            players[i] = null;
+        }
         base.OnStopHost();
     }
     public override void OnServerDisconnect(NetworkConnection conn)

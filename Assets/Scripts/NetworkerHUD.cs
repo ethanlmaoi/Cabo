@@ -4,13 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.Networking.Match;
+using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(NetworkManager))]
 public class NetworkerHUD : MonoBehaviour {
 
     const int MATCH_SIZE = 2;
     const int MESSAGE_TIME = 2;
 
     NetworkManager manager;
+
+    public Canvas sceneMenu;
+    public Canvas onlineMenu;
+    public Canvas localMenu;
 
     public InputField onlineCreateRoomField;
     public InputField onlineJoinRoomField;
@@ -23,14 +29,32 @@ public class NetworkerHUD : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         manager = GetComponent<NetworkManager>();
-        manager.StartMatchMaker();
+
+        onlineMenu.enabled = false;
+        localMenu.enabled = false;
 
         onlineEnterRoomText.enabled = false;
         onlineNoRoomText.enabled = false;
         localEnterIPText.enabled = false;
 	}
-	
-	public void createOnlineGame()
+
+    public void openSceneMenu()
+    {
+        sceneMenu.enabled = true;
+    }
+
+    public void closeSceneMenu()
+    {
+        sceneMenu.enabled = false;
+    }
+
+    public void openOnlineMenu()
+    {
+        onlineMenu.enabled = true;
+        if (manager.matchMaker == null) manager.StartMatchMaker();
+    }
+
+    public void createOnlineGame()
     {
         if(onlineCreateRoomField.text != "")
         {
@@ -72,6 +96,17 @@ public class NetworkerHUD : MonoBehaviour {
         }
     }
 
+    public void closeOnlineMenu()
+    {
+        onlineMenu.enabled = false;
+        if (manager.matchMaker != null) manager.StopMatchMaker();
+    }
+
+    public void openLocalMenu()
+    {
+        localMenu.enabled = true;
+    }
+
     public void createLocalGame()
     {
         manager.StartHost();
@@ -91,9 +126,19 @@ public class NetworkerHUD : MonoBehaviour {
         }
     }
 
+    public void closeLocalMenU()
+    {
+        localMenu.enabled = false;
+    }
+
     IEnumerator disableText(Text t)
     {
         yield return new WaitForSeconds(MESSAGE_TIME);
         if (t != null) t.enabled = false;
+    }
+
+    public void openTutorial()
+    {
+        SceneManager.LoadScene("TutorialScene");
     }
 }
