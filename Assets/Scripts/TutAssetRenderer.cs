@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class AssetRenderer : MonoBehaviour {
+public class TutAssetRenderer : MonoBehaviour
+{
 
     const int ACE = 1;
     const int JACK = 11;
@@ -31,73 +32,73 @@ public class AssetRenderer : MonoBehaviour {
     void Start()
     {
         // initialize number names (append strings to find files more efficiently)
-        if (gameObject.GetComponent<Card>().getNum() == ACE)
+        if (gameObject.GetComponent<TutCard>().getNum() == ACE)
         {
             num = "ace";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 2)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 2)
         {
             num = "2";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 3)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 3)
         {
             num = "3";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 4)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 4)
         {
             num = "4";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 5)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 5)
         {
             num = "5";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 6)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 6)
         {
             num = "6";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 7)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 7)
         {
             num = "7";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 8)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 8)
         {
             num = "8";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 9)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 9)
         {
             num = "9";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == 10)
+        else if (gameObject.GetComponent<TutCard>().getNum() == 10)
         {
             num = "10";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == JACK)
+        else if (gameObject.GetComponent<TutCard>().getNum() == JACK)
         {
             num = "jack";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == QUEEN)
+        else if (gameObject.GetComponent<TutCard>().getNum() == QUEEN)
         {
             num = "queen";
         }
-        else if (gameObject.GetComponent<Card>().getNum() == KING)
+        else if (gameObject.GetComponent<TutCard>().getNum() == KING)
         {
             num = "king";
         }
 
         // initialize suit names
-        if (gameObject.GetComponent<Card>().getSuit() == Card.Suit.DIAMONDS)
+        if (gameObject.GetComponent<TutCard>().getSuit() == TutCard.Suit.DIAMONDS)
         {
             suit = "diamonds";
         }
-        else if (gameObject.GetComponent<Card>().getSuit() == Card.Suit.SPADES)
+        else if (gameObject.GetComponent<TutCard>().getSuit() == TutCard.Suit.SPADES)
         {
             suit = "spades";
         }
-        else if (gameObject.GetComponent<Card>().getSuit() == Card.Suit.HEARTS)
+        else if (gameObject.GetComponent<TutCard>().getSuit() == TutCard.Suit.HEARTS)
         {
             suit = "hearts";
         }
-        else if (gameObject.GetComponent<Card>().getSuit() == Card.Suit.CLUBS)
+        else if (gameObject.GetComponent<TutCard>().getSuit() == TutCard.Suit.CLUBS)
         {
             suit = "clubs";
         }
@@ -114,7 +115,7 @@ public class AssetRenderer : MonoBehaviour {
     void Update()
     {
         // toggleCard method (DEBUG PURPOSES)
-        if (gameObject.GetComponent<Card>().checkFlipped()) // flips card up if true
+        if (gameObject.GetComponent<TutCard>().checkFlipped()) // flips card up if true
         {
             gameObject.GetComponent<Animator>().SetBool("flippedUp", true);
         }
@@ -137,7 +138,7 @@ public class AssetRenderer : MonoBehaviour {
             StartCoroutine(replaceDescaleOverTime(0.5f));
         }
 
-        if(highlight != null && highlight.transform.position != this.transform.position)
+        if (highlight != null && highlight.transform.position != this.transform.position)
         {
             highlight.transform.position = this.transform.position;
         }
@@ -199,12 +200,12 @@ public class AssetRenderer : MonoBehaviour {
 
     public void removeHighlightCard()
     {
-        if(highlight != null) GameObject.Destroy(highlight);
+        if (highlight != null) GameObject.Destroy(highlight);
     }
 
     public void toggleCard()
     {
-        gameObject.GetComponent<Card>().toggleCard();
+        gameObject.GetComponent<TutCard>().toggleCard();
     }
 
     // play animation that reveals drawn card
