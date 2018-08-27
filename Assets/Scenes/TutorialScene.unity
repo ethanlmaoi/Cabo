@@ -265,34 +265,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1104688277
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1104688279}
-  m_Layer: 0
-  m_Name: tutorial_bubbles
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1104688279
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1104688277}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.6245118, y: 0.51556075, z: 42.03125}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1562341852
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,6 +293,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 1289995211087398, guid: 8ad5dd3da603cb44a8ed1a75b712024f, type: 2}
+  currentMode: 0
+  tut_1_welcome: {fileID: 1488964758540746, guid: beb9a67a7ef9cbd41a7de632cc2fa808,
+    type: 2}
+  tut_2_beginning: {fileID: 1469700603934944, guid: 8a0b03e81faed4d45b76fb1768b4e3f8,
+    type: 2}
+  tut_3_goPeek: {fileID: 0}
 --- !u!4 &1562341854
 Transform:
   m_ObjectHideFlags: 0

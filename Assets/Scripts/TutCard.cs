@@ -92,12 +92,12 @@ public class TutCard : MonoBehaviour {
 
     public void highlightCard()
     {
-        gameObject.GetComponent<AssetRenderer>().highlightCard();
+        gameObject.GetComponent<TutAssetRenderer>().highlightCard();
     }
 
     public void removeHighlightCard()
     {
-        gameObject.GetComponent<AssetRenderer>().removeHighlightCard();
+        gameObject.GetComponent<TutAssetRenderer>().removeHighlightCard();
     }
 
     public string toString()

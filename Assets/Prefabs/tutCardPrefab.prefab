@@ -23,9 +23,10 @@ GameObject:
   - component: {fileID: 114206659034731074}
   - component: {fileID: 95052355340935906}
   - component: {fileID: 114960609024730704}
+  - component: {fileID: 65865291839774980}
   m_Layer: 0
   m_Name: tutCardPrefab
-  m_TagString: Untagged
+  m_TagString: 10CLUBS
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,6 +44,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &65865291839774980
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1289995211087398}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.25, y: 3.25, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &95052355340935906
 Animator:
   serializedVersion: 3
@@ -72,9 +85,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc878c67ad79af244a8c9c6f8cf735ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  num: 4
-  suit: 2
+  num: 10
+  suit: 1
   isFlipped: 0
+  moveTarget: {x: 2.55, y: -3.5, z: -1}
 --- !u!114 &114960609024730704
 MonoBehaviour:
   m_ObjectHideFlags: 1

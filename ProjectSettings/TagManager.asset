@@ -15,6 +15,10 @@ TagManager:
   - PlayButton
   - Networker
   - QuitGame
+  - 4HEARTS
+  - 6SPADES
+  - 8DIAMONDS
+  - 10CLUBS
   layers:
   - Default
   - TransparentFX
