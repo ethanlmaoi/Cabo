@@ -90,8 +90,9 @@ public class Tutorial : MonoBehaviour {
 
     void exeBeginning(RaycastHit hit)
     {
+        Destroy(GameObject.Find("tut_2_beginning(Clone)"));
+        Instantiate(tut_3_goPeek);
         updateMode(Modes.GO_PEEK);
-
     }
 
     void updateMode(Modes newMode)
