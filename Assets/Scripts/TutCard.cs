@@ -14,17 +14,17 @@ public class TutCard : MonoBehaviour {
     [SerializeField] Suit suit;
     [SerializeField] bool isFlipped;
 
-    Vector3 moveTarget;
+    [SerializeField] Vector3 moveTarget;
     float moveSpeed = 20f;
 
     // Use this for initialization
     void Start ()
     {
-        moveTarget = Vector3.zero;
+        // nothing
     }
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
         if (moveTarget != Vector3.zero)
         {

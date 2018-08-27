@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212672788537245988}
   - component: {fileID: 114206659034731074}
   - component: {fileID: 95052355340935906}
-  - component: {fileID: 114848184028449684}
+  - component: {fileID: 114960609024730704}
   m_Layer: 0
   m_Name: tutCardPrefab
   m_TagString: Untagged
@@ -75,7 +75,7 @@ MonoBehaviour:
   num: 4
   suit: 2
   isFlipped: 0
---- !u!114 &114848184028449684
+--- !u!114 &114960609024730704
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,7 +83,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1289995211087398}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 597dfcfc28f4afb4bb9e809c8018e1be, type: 3}
+  m_Script: {fileID: 11500000, guid: 1056e0679ba43dc4fa139bb554fa8348, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   highlightPrefab: {fileID: 1992234206603086, guid: 4215c0b67683b6d43bedb1b30dfd68e8,
