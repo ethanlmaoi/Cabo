@@ -13,6 +13,10 @@ public class Tutorial : MonoBehaviour {
     [SerializeField] GameObject tut_1_welcome;
     [SerializeField] GameObject tut_2_beginning;
     [SerializeField] GameObject tut_3_goPeek;
+    [SerializeField] GameObject green_arrow;
+
+    bool firstCardFlipped;
+    bool secondCardFlipped;
 
     void Start ()
     {
@@ -76,6 +80,21 @@ public class Tutorial : MonoBehaviour {
                     case Modes.BEGINNING:
                         exeBeginning(hit);
                         break;
+                    case Modes.GO_PEEK:
+                        exePeek(hit);
+                        break;
+                    case Modes.YOU_CHOSE:
+                        exeYouChose(hit);
+                        break;
+                    case Modes.DRAW:
+                        exeDraw(hit);
+                        break;
+                    case Modes.STACK:
+                        exeStack(hit);
+                        break;
+                    case Modes.REPLACE:
+                        exeReplace(hit);
+                        break;
                 }
             }
         }
@@ -92,7 +111,46 @@ public class Tutorial : MonoBehaviour {
     {
         Destroy(GameObject.Find("tut_2_beginning(Clone)"));
         Instantiate(tut_3_goPeek);
+        Instantiate(green_arrow, new Vector3(-2.55f, -1.6f, -2f), Quaternion.identity); // creates green arrow for first card
+        Instantiate(green_arrow, new Vector3(-0.87f, -1.6f, -2f), Quaternion.identity); // creates green arrow for second card
         updateMode(Modes.GO_PEEK);
+    }
+
+    void exePeek(RaycastHit hit)
+    {
+        if (hit.transform.tag == "4HEARTS")
+        {
+            firstCardFlipped = true;
+        }
+        if (hit.transform.tag == "6SPADES")
+        {
+            secondCardFlipped = true;
+        }
+
+        if (firstCardFlipped && secondCardFlipped)
+        {
+            updateMode(Modes.YOU_CHOSE);
+        }
+    }
+
+    void exeYouChose(RaycastHit hit)
+    {
+
+    }
+
+    void exeDraw(RaycastHit hit)
+    {
+
+    }
+
+    void exeStack(RaycastHit hit)
+    {
+
+    }
+
+    void exeReplace(RaycastHit hit)
+    {
+
     }
 
     void updateMode(Modes newMode)

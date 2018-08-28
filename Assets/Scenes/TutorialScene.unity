@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 812895724}
   - component: {fileID: 812895723}
+  - component: {fileID: 812895725}
   m_Layer: 0
   m_Name: Cabo Board
   m_TagString: Untagged
@@ -188,6 +189,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &812895725
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 812895722}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 12.8, y: 7.2, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1100803254
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,7 +311,10 @@ MonoBehaviour:
     type: 2}
   tut_2_beginning: {fileID: 1469700603934944, guid: 8a0b03e81faed4d45b76fb1768b4e3f8,
     type: 2}
-  tut_3_goPeek: {fileID: 0}
+  tut_3_goPeek: {fileID: 1409189788367096, guid: 2f3378b925cdc3e4da0f75dec8a5571f,
+    type: 2}
+  green_arrow: {fileID: 1779768325124516, guid: 39960440745ae4a48b9b129b956724f8,
+    type: 2}
 --- !u!4 &1562341854
 Transform:
   m_ObjectHideFlags: 0
