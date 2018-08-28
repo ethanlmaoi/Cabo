@@ -19,6 +19,7 @@ TagManager:
   - 6SPADES
   - 8DIAMONDS
   - 10CLUBS
+  - greenArrow
   layers:
   - Default
   - TransparentFX
