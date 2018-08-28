@@ -33,6 +33,7 @@ public class Tutorial : MonoBehaviour {
     bool drewCard;
     bool discarded;
     bool discardMode;
+    bool cardDrawn;
 
     Vector3 activeCardPos = new Vector3(5.75f, 0, 0);
 
@@ -162,6 +163,9 @@ public class Tutorial : MonoBehaviour {
                     case Modes.REPLACE:
                         exeReplace(hit);
                         break;
+                    case Modes.TECHNIQUES:
+                        exeTechniques(hit);
+                        break;
                 }
             }
         }
@@ -246,11 +250,10 @@ public class Tutorial : MonoBehaviour {
 
     void exeStack(RaycastHit hit)
     {
-        if (hit.transform.tag == "Discard")
+        if (hit.transform.tag == "Discard" && !discarded)
         {
             GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, 0f));
             GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutAssetRenderer>().discardCard();
-            GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutCard>().flipDown();
             Destroy(GameObject.Find("tut_6_stack(Clone)"));
             Instantiate(tut_65_stack);
             discarded = true;
@@ -263,7 +266,7 @@ public class Tutorial : MonoBehaviour {
             }
 
             Destroy(GameObject.FindGameObjectWithTag("greenArrow"));
-            Instantiate(green_arrow, new Vector3(0f, 0f, -2f), Quaternion.identity);
+            Instantiate(green_arrow, new Vector3(-2.61f, -1.59f, -2f), Quaternion.identity);
             Destroy(GameObject.Find("tut_6.5_stack(Clone)"));
             Instantiate(tut_675_stack);
             discardMode = true;
@@ -271,15 +274,63 @@ public class Tutorial : MonoBehaviour {
 
         if (hit.transform.tag == "4HEARTS" && discarded && discardMode)
         {
+            foreach (string tag in myCards)
+            {
+                GameObject.FindGameObjectWithTag(tag).GetComponent<TutCard>().removeHighlightCard();
+            }
+
             GameObject.FindGameObjectWithTag("4HEARTS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, 0f));
             GameObject.FindGameObjectWithTag("4HEARTS").GetComponent<TutCard>().flipUp();
             Destroy(GameObject.Find("tut_6.75_stack(Clone)"));
+            Destroy(GameObject.FindGameObjectWithTag("greenArrow"));
+            Instantiate(green_arrow, new Vector3(-1.20f, 1.77f, -2f), Quaternion.identity);
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutCard>().highlightCard(); // simulate highlight deck
             Instantiate(tut_7_replace);
             updateMode(Modes.REPLACE);
         }
     }
 
     void exeReplace(RaycastHit hit)
+    {
+        if (hit.transform.tag == "Deck")
+        {
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutCard>().setMoveTarget(activeCardPos);
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutAssetRenderer>().drawCard();
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutCard>().flipUp();
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutCard>().removeHighlightCard();
+            Destroy(GameObject.FindGameObjectWithTag("greenArrow"));
+            Instantiate(green_arrow, new Vector3(2.53f, -1.66f, -2f), Quaternion.identity);
+
+            foreach (string tag in myCards)
+            {
+                if (tag != "4HEARTS")
+                {
+                    GameObject.FindGameObjectWithTag(tag).GetComponent<TutCard>().highlightCard();
+                }
+            }
+
+            cardDrawn = true;
+        }
+
+        if (hit.transform.tag == "10CLUBS" && cardDrawn)
+        {
+            foreach (string tag in myCards)
+            {
+                GameObject.FindGameObjectWithTag(tag).GetComponent<TutCard>().removeHighlightCard();
+            }
+            Destroy(GameObject.Find("tut_7_replace(Clone)"));
+            Instantiate(tut_8_techniques);
+            updateMode(Modes.TECHNIQUES);
+            GameObject.FindGameObjectWithTag("10CLUBS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, -0.01f));
+            GameObject.FindGameObjectWithTag("10CLUBS").GetComponent<TutCard>().flipUp();
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutCard>().setMoveTarget(new Vector3(2.55f, -3.5f, 0f));
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutAssetRenderer>().replaceCard();
+            GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutCard>().flipDown();
+            Destroy(GameObject.FindGameObjectWithTag("greenArrow"));
+        }
+    }
+
+    void exeTechniques(RaycastHit hit)
     {
 
     }

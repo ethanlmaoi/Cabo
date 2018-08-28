@@ -20,6 +20,13 @@ TagManager:
   - 8DIAMONDS
   - 10CLUBS
   - greenArrow
+  - 1HEARTS
+  - 3SPADES
+  - 5DIAMONDS
+  - 7CLUBS
+  - 4DIAMONDS
+  - 7HEARTS
+  - KDIAMONDS
   layers:
   - Default
   - TransparentFX

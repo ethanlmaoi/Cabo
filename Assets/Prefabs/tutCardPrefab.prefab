@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 65865291839774980}
   m_Layer: 0
   m_Name: tutCardPrefab
-  m_TagString: 10CLUBS
+  m_TagString: 4DIAMONDS
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85,10 +85,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc878c67ad79af244a8c9c6f8cf735ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  num: 10
-  suit: 1
+  num: 4
+  suit: 0
   isFlipped: 0
-  moveTarget: {x: 2.55, y: -3.5, z: -1}
+  moveTarget: {x: -1.17, y: -0.05, z: -0.02}
 --- !u!114 &114960609024730704
 MonoBehaviour:
   m_ObjectHideFlags: 1
