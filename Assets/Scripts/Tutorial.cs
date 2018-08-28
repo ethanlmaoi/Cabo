@@ -6,6 +6,7 @@ public class Tutorial : MonoBehaviour {
 
     [SerializeField] GameObject cardPrefab;
 
+    ArrayList myCards, hisCards;
     Vector3 target;
     enum Modes { WELCOME, BEGINNING, GO_PEEK, YOU_CHOSE, DRAW, STACK, REPLACE, TECHNIQUES };
     [SerializeField] Modes currentMode;
@@ -16,6 +17,8 @@ public class Tutorial : MonoBehaviour {
     [SerializeField] GameObject tut_4_youChose;
     [SerializeField] GameObject tut_5_draw;
     [SerializeField] GameObject tut_6_stack;
+    [SerializeField] GameObject tut_65_stack;
+    [SerializeField] GameObject tut_675_stack;
     [SerializeField] GameObject tut_7_replace;
     [SerializeField] GameObject tut_8_techniques;
     [SerializeField] GameObject green_arrow;
@@ -28,13 +31,15 @@ public class Tutorial : MonoBehaviour {
     bool firstCardFlipped;
     bool secondCardFlipped;
     bool drewCard;
+    bool discarded;
+    bool discardMode;
 
     Vector3 activeCardPos = new Vector3(5.75f, 0, 0);
 
     void Start ()
     {
-        ArrayList myCards = new ArrayList();
-        ArrayList hisCards = new ArrayList();
+        myCards = new ArrayList();
+        hisCards = new ArrayList();
 
         target = new Vector3(-2.55f, -3.5f, 0f); // HANDCARD 1 (MY CARDS)
         cardPrefab.tag = "4HEARTS";
@@ -232,12 +237,46 @@ public class Tutorial : MonoBehaviour {
             GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutCard>().flipUp();
             GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutCard>().removeHighlightCard();
             Destroy(GameObject.FindGameObjectWithTag("greenArrow"));
+            Instantiate(green_arrow, new Vector3(1.13f, 1.79f, -2f), Quaternion.identity);
+            Destroy(GameObject.Find("tut_5_draw(Clone)"));
+            Instantiate(tut_6_stack);
+            updateMode(Modes.STACK);
         }
     }
 
     void exeStack(RaycastHit hit)
     {
+        if (hit.transform.tag == "Discard")
+        {
+            GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, 0f));
+            GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutAssetRenderer>().discardCard();
+            GameObject.FindGameObjectWithTag("4DIAMONDS").GetComponent<TutCard>().flipDown();
+            Destroy(GameObject.Find("tut_6_stack(Clone)"));
+            Instantiate(tut_65_stack);
+            discarded = true;
+        }
+        else if (hit.transform.tag == "Discard" && discarded)
+        {
+            foreach (string tag in myCards)
+            {
+                GameObject.FindGameObjectWithTag(tag).GetComponent<TutCard>().highlightCard();
+            }
 
+            Destroy(GameObject.FindGameObjectWithTag("greenArrow"));
+            Instantiate(green_arrow, new Vector3(0f, 0f, -2f), Quaternion.identity);
+            Destroy(GameObject.Find("tut_6.5_stack(Clone)"));
+            Instantiate(tut_675_stack);
+            discardMode = true;
+        }
+
+        if (hit.transform.tag == "4HEARTS" && discarded && discardMode)
+        {
+            GameObject.FindGameObjectWithTag("4HEARTS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, 0f));
+            GameObject.FindGameObjectWithTag("4HEARTS").GetComponent<TutCard>().flipUp();
+            Destroy(GameObject.Find("tut_6.75_stack(Clone)"));
+            Instantiate(tut_7_replace);
+            updateMode(Modes.REPLACE);
+        }
     }
 
     void exeReplace(RaycastHit hit)
