@@ -8,7 +8,7 @@ public class Tutorial : MonoBehaviour {
 
     ArrayList myCards, hisCards;
     Vector3 target;
-    enum Modes { WELCOME, BEGINNING, GO_PEEK, YOU_CHOSE, DRAW, STACK, REPLACE, TECHNIQUES };
+    enum Modes { WELCOME, BEGINNING, GO_PEEK, YOU_CHOSE, DRAW, STACK, REPLACE, TECHNIQUES, VALUES, RED_KING, SPECIAL_CARDS, PEEK, PEEK_OPP, BLIND_SWAP, KNOW_SWAP, OBJECTIVE, NOTE_ONE, NOTE_2, CONFIDENT, WINNER };
     [SerializeField] Modes currentMode;
 
     [SerializeField] GameObject tut_1_welcome;
