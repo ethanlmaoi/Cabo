@@ -9,7 +9,7 @@ public class Tutorial : MonoBehaviour {
 
     ArrayList myCards, hisCards;
     Vector3 target;
-    enum Modes { WELCOME, BEGINNING, GO_PEEK, YOU_CHOSE, DRAW, STACK, REPLACE, TECHNIQUES, VALUES, RED_KING, SPECIAL_CARDS, PEEK, PEEK_OPP, BLIND_SWAP, KNOW_SWAP, OBJECTIVE, NOTE_ONE, NOTE_2, CONFIDENT, WINNER };
+    enum Modes { WELCOME, BEGINNING, GO_PEEK, YOU_CHOSE, DRAW, STACK, REPLACE, TECHNIQUES, VALUES, RED_KING, SPECIAL_CARDS, PEEK, PEEK_OPP, BLIND_SWAP, KNOW_SWAP, OBJECTIVE, NOTE_ONE, NOTE_TWO, CONFIDENT, WINNER };
     [SerializeField] Modes currentMode;
 
     [SerializeField] GameObject tut_1_welcome;
@@ -22,6 +22,19 @@ public class Tutorial : MonoBehaviour {
     [SerializeField] GameObject tut_675_stack;
     [SerializeField] GameObject tut_7_replace;
     [SerializeField] GameObject tut_8_techniques;
+    [SerializeField] GameObject tut_9_values;
+    [SerializeField] GameObject tut_10_redKing;
+    [SerializeField] GameObject tut_11_specialCards;
+    [SerializeField] GameObject tut_115_specialCards;
+    [SerializeField] GameObject tut_13_peek;
+    [SerializeField] GameObject tut_14_peekOpp;
+    [SerializeField] GameObject tut_15_blindSwap;
+    [SerializeField] GameObject tut_16_knowSwap;
+    [SerializeField] GameObject tut_17_objective;
+    [SerializeField] GameObject tut_18_noteOne;
+    [SerializeField] GameObject tut_19_noteTwo;
+    [SerializeField] GameObject tut_20_confident;
+    [SerializeField] GameObject tut_21_winner;
     [SerializeField] GameObject green_arrow;
 
     const int ACE = 1;
@@ -150,7 +163,7 @@ public class Tutorial : MonoBehaviour {
                         exeBeginning(hit);
                         break;
                     case Modes.GO_PEEK:
-                        exePeek(hit);
+                        exeGoPeek(hit);
                         break;
                     case Modes.YOU_CHOSE:
                         exeYouChose(hit);
@@ -167,8 +180,44 @@ public class Tutorial : MonoBehaviour {
                     case Modes.TECHNIQUES:
                         exeTechniques(hit);
                         break;
+                    case Modes.VALUES:
+                        exeValues(hit);
+                        break;
+                    case Modes.RED_KING:
+                        exeRedKing(hit);
+                        break;
+                    case Modes.SPECIAL_CARDS:
+                        exeSpecialCards(hit);
+                        break;
+                    case Modes.PEEK:
+                        exePeek(hit);
+                        break;
+                    case Modes.PEEK_OPP:
+                        exePeekOpp(hit);
+                        break;
+                    case Modes.BLIND_SWAP:
+                        exeBlindSwap(hit);
+                        break;
+                    case Modes.KNOW_SWAP:
+                        exeKnowSwap(hit);
+                        break;
+                    case Modes.OBJECTIVE:
+                        exeObjective(hit);
+                        break;
+                    case Modes.NOTE_ONE:
+                        exeNoteOne(hit);
+                        break;
+                    case Modes.NOTE_TWO:
+                        exeNoteTwo(hit);
+                        break;
+                    case Modes.CONFIDENT:
+                        exeConfident(hit);
+                        break;
+                    case Modes.WINNER:
+                        exeWinner(hit);
+                        break;
                 }
-            }
+        }
         }
 	}
 
@@ -190,7 +239,7 @@ public class Tutorial : MonoBehaviour {
         updateMode(Modes.GO_PEEK);
     }
 
-    void exePeek(RaycastHit hit)
+    void exeGoPeek(RaycastHit hit)
     {
         if (hit.transform.tag == "4HEARTS")
         {
@@ -280,7 +329,7 @@ public class Tutorial : MonoBehaviour {
                 GameObject.FindGameObjectWithTag(tag).GetComponent<TutCard>().removeHighlightCard();
             }
 
-            GameObject.FindGameObjectWithTag("4HEARTS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, 0f));
+            GameObject.FindGameObjectWithTag("4HEARTS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, -0.01f));
             GameObject.FindGameObjectWithTag("4HEARTS").GetComponent<TutCard>().flipUp();
             Destroy(GameObject.Find("tut_6.75_stack(Clone)"));
             Destroy(GameObject.FindGameObjectWithTag("greenArrow"));
@@ -322,7 +371,7 @@ public class Tutorial : MonoBehaviour {
             Destroy(GameObject.Find("tut_7_replace(Clone)"));
             Instantiate(tut_8_techniques);
             updateMode(Modes.TECHNIQUES);
-            GameObject.FindGameObjectWithTag("10CLUBS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, -0.01f));
+            GameObject.FindGameObjectWithTag("10CLUBS").GetComponent<TutCard>().setMoveTarget(new Vector3(1.155f, -0.05f, -0.02f));
             GameObject.FindGameObjectWithTag("10CLUBS").GetComponent<TutCard>().flipUp();
             GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutCard>().setMoveTarget(new Vector3(2.55f, -3.5f, 0f));
             GameObject.FindGameObjectWithTag("KDIAMONDS").GetComponent<TutAssetRenderer>().replaceCard();
@@ -332,6 +381,77 @@ public class Tutorial : MonoBehaviour {
     }
 
     void exeTechniques(RaycastHit hit)
+    {
+        Destroy(GameObject.Find("tut_8_techniques(Clone)"));
+        Instantiate(tut_9_values);
+        updateMode(Modes.VALUES);
+    }
+
+    void exeValues(RaycastHit hit)
+    {
+        Destroy(GameObject.Find("tut_9_values(Clone)"));
+        Instantiate(tut_10_redKing);
+        updateMode(Modes.RED_KING);
+    }
+
+    void exeRedKing(RaycastHit hit)
+    {
+         Destroy(GameObject.Find("tut_10_redKing(Clone)"));
+         Instantiate(tut_11_specialCards);
+         Instantiate(tut_115_specialCards);
+         updateMode(Modes.SPECIAL_CARDS);
+    }
+
+    void exeSpecialCards(RaycastHit hit)
+    {
+        Destroy(GameObject.Find("tut_11_specialCards(Clone)"));
+        Destroy(GameObject.Find("tut_12_specialCards2(Clone)"));
+        Instantiate(tut_13_peek);
+        updateMode(Modes.PEEK);
+        Instantiate(green_arrow, new Vector3(-1.2f, 1.79f, -2f), Quaternion.identity);
+    }
+
+    void exePeek(RaycastHit hit)
+    {
+        updateMode(Modes.PEEK_OPP);
+    }
+
+    void exePeekOpp(RaycastHit hit)
+    {
+
+    }
+
+    void exeBlindSwap(RaycastHit hit)
+    {
+
+    }
+
+    void exeKnowSwap(RaycastHit hit)
+    {
+
+    }
+
+    void exeObjective(RaycastHit hit)
+    {
+
+    }
+
+    void exeNoteOne(RaycastHit hit)
+    {
+
+    }
+
+    void exeNoteTwo(RaycastHit hit)
+    {
+
+    }
+
+    void exeConfident(RaycastHit hit)
+    {
+
+    }
+
+    void exeWinner(RaycastHit hit)
     {
 
     }
